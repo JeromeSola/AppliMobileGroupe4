@@ -1,0 +1,66 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>
+      Conversation avec l'assistant
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="!isTextModeEnabled">
+  <div class="container">
+    <ion-list>
+      <ion-item-divider class="message-divider"></ion-item-divider>
+      <div class="message" *ngFor="let message of messageList">
+          <div class="user-message" class="ion-text-right" *ngIf="message.isFromUser">
+            <ion-card class="user-card">
+              <ion-card-content class="user-content" color="primary">
+                <span class="msg-name">Moi   </span>
+                <span class="msg-date">{{message.getDisplayedDate()}}</span>
+                <p class="ion-text-wrap" [innerHTML]="message.htmlContent"></p>
+              </ion-card-content>
+            </ion-card>
+          </div>
+          <div class="assistant-message" class="ion-text-left" *ngIf="!message.isFromUser">
+            <ion-card class="assistant-card">
+              <ion-card-content class="assistant-content">
+                <span class="msg-name">Assistant   </span>
+                <span class="msg-date">{{message.getDisplayedDate()}}</span>
+                <p class="ion-text-wrap" [innerHTML]="message.htmlContent"></p>
+              </ion-card-content>
+            </ion-card>
+          </div>
+          <ion-item-divider class="message-divider"></ion-item-divider>
+      </div>
+    </ion-list>
+  </div>
+</ion-content>
+
+<ion-footer no-border>
+  <ion-toolbar *ngIf="isTextModeEnabled">
+    <ion-item>
+      <ion-button item-start (click)="onSwitchMode()" fill="clear">
+        <ion-icon slot="icon-only" name="mic"></ion-icon>
+      </ion-button>
+      <ion-input [(ngModel)]="userInput" placeholder='Entrez votre texte'></ion-input>
+      <ion-button item-end disabled="{{!userInput}}" (click)="onSendClick()" fill="clear">
+        <ion-icon slot="icon-only" name="send"></ion-icon>
+      </ion-button>
+    </ion-item>
+  </ion-toolbar>
+  <ion-toolbar class="mic-footbar" no-border *ngIf="!isTextModeEnabled">
+    <ion-row class="ion-justify-content-center">
+      <ion-fab-button class="mic-footbar-button" (click)="onSpeak()">
+        <ion-icon name="mic"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-button class="mic-footbar-button" (click)="onSwitchMode()">
+        <ion-icon name="create"></ion-icon>
+      </ion-fab-button>
+      <!--
+      <ion-button disabled="{{!lastAudio}}" (click)="onPlay()">Jouer Dernier Audio</ion-button>
+      -->
+    </ion-row>
+  </ion-toolbar>
+</ion-footer>

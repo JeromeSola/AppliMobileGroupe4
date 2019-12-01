@@ -1,0 +1,52 @@
+ion-content{
+    --ion-background-color:rgb(255, 255, 255);
+}
+ion-title{
+    text-align: center;
+}
+.user-card {
+    background: rgb(60, 106, 231);
+    color: rgb(255, 255, 255);
+    width: fit-content;
+    float: right;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
+.user-content {
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+.assistant-card {
+    background: rgb(235, 235, 235);
+    color: rgb(61, 61, 61);
+    width: fit-content;
+    float: left;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
+.assistant-content {
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+.msg-name {
+    font-size: smaller;
+    font-weight: bold;
+}
+.msg-date {
+    font-size: smaller;
+}
+.message-divider {
+    background: rgba(0, 0, 0, 0);
+    padding-bottom: 0px;
+    padding: 0px !important;
+    border: 0px !important;
+    margin: 0px !important;
+}
+.mic-footbar {
+    --background: transparent;
+    --ion-color-base: transparent !important;
+}
+.mic-footbar-button {
+    margin-left: 8px;
+    margin-right: 8px;
+}
