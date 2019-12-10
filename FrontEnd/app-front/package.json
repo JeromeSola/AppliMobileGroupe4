@@ -78,10 +78,7 @@
   "cordova": {
     "plugins": {
       "cordova-plugin-media-capture": {},
-<<<<<<< HEAD
-=======
       "cordova-plugin-inappbrowser": {},
->>>>>>> f77e0cc2e32aa7561740fb62891b6065f044a5bd
       "cordova-plugin-whitelist": {},
       "cordova-plugin-statusbar": {},
       "cordova-plugin-device": {},
@@ -89,14 +86,10 @@
       "cordova-plugin-ionic-webview": {
         "ANDROID_SUPPORT_ANNOTATIONS_VERSION": "27.+"
       },
-<<<<<<< HEAD
-      "cordova-plugin-ionic-keyboard": {}
-=======
       "cordova-plugin-ionic-keyboard": {},
       "cordova-plugin-googleplus": {
         "PLAY_SERVICES_VERSION": "15.0.1"
       }
->>>>>>> f77e0cc2e32aa7561740fb62891b6065f044a5bd
     },
     "platforms": [
       "android"
