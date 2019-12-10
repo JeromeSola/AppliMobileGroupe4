@@ -1,20 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
-import { UserInfo } from './userInfo';
-
-const MOCK_USER_SELF = new UserInfo();
-MOCK_USER_SELF.username = 'dev';
-MOCK_USER_SELF.firstName = 'Dev';
-MOCK_USER_SELF.lastName = 'Loper';
-MOCK_USER_SELF.age = 21;
-
-const MOCK_USER_OTHER = new UserInfo();
-MOCK_USER_OTHER.username = 'jejesola';
-MOCK_USER_OTHER.firstName = 'Jérôme';
-MOCK_USER_OTHER.lastName = 'Sola';
-MOCK_USER_OTHER.age = 23;
+import { UserService, UserInfo } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-profile',
@@ -23,51 +12,49 @@ MOCK_USER_OTHER.age = 23;
 })
 export class ProfilePage implements OnInit {
 
-  private _displayedUser: UserInfo;
-  private _isValidUser: boolean;
-  private _isCurrentUser: boolean;
+  public LOGGED_USERNAME = 'mdupont';
 
-  constructor(private route: ActivatedRoute) { }
+  private userInput: string;
+  private username: string;
+  private displayedUser: UserInfo;
+  private userSubscription: Subscription;
+
+  constructor(private route: ActivatedRoute, private router: Router, private userService: UserService) { }
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
-      this.updateDisplayedUser(params.get('id'));      
+      this.username = params.get('username');
+      this.userSubscription = this.userService.queryByUsername(this.username)
+      .subscribe(users => { this.displayedUser = users[0]; });
     });
   }
 
-  updateDisplayedUser(username: string) {
-    this.displayedUser = this.getUserData(username);
-    this.updateValidUser();
-    this.updateCurrentUser();
+  ngOnDestroy() {
+    this.userSubscription.unsubscribe();
   }
 
-  getUserData(username: string): UserInfo {
-    if (username == MOCK_USER_SELF.username)
-      return MOCK_USER_SELF;
-    if (username == MOCK_USER_OTHER.username)
-      return MOCK_USER_OTHER;
-    return null;
+  ionViewWillEnter() {
+    this.userInput = "";
   }
 
-  updateValidUser() {
-    this.isValidUser = (this.displayedUser != null);
+  isLoggedUser() {
+    if (this.displayedUser == null)
+      return null;
+    return ( this.displayedUser.username == this.LOGGED_USERNAME );
   }
 
-  updateCurrentUser() {
-    if (!this.isValidUser)
-      return this.isCurrentUser = false;
-    return this.isCurrentUser = (this.displayedUser.username == MOCK_USER_SELF.username);
+  onClickSearch() {
+    if (this.userInput != null && this.userInput.length > 0)
+      this.router.navigateByUrl(`/profile/${this.userInput}`);
+  }
+
+  inputEventHanlder(keyCode: number) {
+    if (keyCode == 13)
+      this.onClickSearch();
   }
 
   onClickEdit() {
     console.log('salut');
   }
-
-  get displayedUser(): UserInfo { return this._displayedUser; }
-  set displayedUser(value: UserInfo) { this._displayedUser = value; }
-  get isValidUser(): boolean { return this._isValidUser; }
-  set isValidUser(value: boolean) { this._isValidUser = value; }
-  get isCurrentUser(): boolean { return this._isCurrentUser; }
-  set isCurrentUser(value: boolean) { this._isCurrentUser = value; }
 
 }

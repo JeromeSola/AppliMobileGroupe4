@@ -6,36 +6,38 @@
     <ion-title>
       Profil
     </ion-title>
-    <ion-button fill="clear" slot="end" (click)="onClickEdit()">
+    <ion-button *ngIf="isLoggedUser()" fill="clear" slot="end" (click)="onClickEdit()">
       <ion-icon class="blackButton" name="create"></ion-icon>
     </ion-button>
   </ion-toolbar>
+  <ion-item>
+    <ion-input [(ngModel)]="userInput" placeholder='Rechercher un utilisateur'></ion-input>
+    <ion-button disabled="{{!userInput}}" (click)="onClickSearch()" (keyup.enter)="onClickSearch()" slot="end" fill="clear">
+        <ion-icon name="search"></ion-icon>
+    </ion-button>
+  </ion-item>
 </ion-header>
 
-<ion-content *ngIf="this.username == 'dev'">
+<ion-content>
     <div class="border-wrapper">
-        <ion-img src="../../assets/img/default-cover.png"></ion-img>
+        <ion-img *ngIf="displayedUser" src="../../assets/img/default-cover.png"></ion-img>
+        <ion-img *ngIf="!displayedUser" src="../../assets/img/unknown-cover.png"></ion-img>
     </div>
     <ion-grid class="avatar-wrapper">
-      <ion-row justify-content-center>
+      <ion-row class="ion-justify-content-center">
           <ion-avatar class="user-avatar">
-            <img src="../../assets/img/default-avatar.png">
+            <img *ngIf="displayedUser" src="../../assets/img/default-avatar.png">
+            <img *ngIf="!displayedUser" src="../../assets/img/unknown-avatar.png">
           </ion-avatar>
       </ion-row>
     </ion-grid>
-    {{this.displayedUser.username}}
-</ion-content>
 
-<ion-content *ngIf="this.isValidUser">
-  <div class="border-wrapper">
-    <ion-img src="../../assets/img/unknown-cover.png"></ion-img>
-</div>
-<ion-grid class="avatar-wrapper">
-  <ion-row justify-content-center>
-      <ion-avatar class="user-avatar">
-        <img src="../../assets/img/unknown-avatar.png">
-      </ion-avatar>
-  </ion-row>
-</ion-grid>
-Unknown user
+    <div *ngIf="displayedUser">
+      {{this.displayedUser.username}}
+    </div>
+
+    <div *ngIf="!displayedUser">
+      Unknown user : {{ username }}
+    </div>
+    
 </ion-content>

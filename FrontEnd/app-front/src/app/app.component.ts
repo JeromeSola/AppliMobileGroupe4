@@ -23,7 +23,7 @@ export class AppComponent {
     },
     {
       title: 'Profil',
-      url: '/profile/dev',
+      url: '/profile/mdupont',
       icon: 'contact'
     },
     {
