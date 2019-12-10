@@ -13,3 +13,5 @@
 /DialogFlow/test/platforms
 /DialogFlow/test/plugins
 /DialogFlow/test/www
+apikeys/*
+!apikeys/README.md 
