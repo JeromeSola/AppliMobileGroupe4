@@ -5,9 +5,31 @@
         <ion-toolbar>
           <ion-title>Menu</ion-title>
         </ion-toolbar>
+        <ion-row *ngIf="!isUserLogged()">
+          <ion-col class="login-row">
+              <ion-button shape="round" size="default">
+                Se Connecter
+              </ion-button>
+          </ion-col>
+        </ion-row>
+        <!--
+        <ion-item *ngIf="isUserLogged()">
+          <ion-avatar slot="start">
+            <img src="../../assets/img/default-avatar.png">
+          </ion-avatar>
+          {{ this.loginService.loggedUser }}
+        </ion-item>-->
       </ion-header>
       <ion-content>
         <ion-list>
+          <ion-menu-toggle auto-hide="false" *ngIf="isUserLogged()">
+            <ion-item [routerDirection]="'root'" [routerLink]="['/profile', this.loginService.loggedUser]">
+              <ion-avatar slot="start"><img src="../../assets/img/default-avatar.png"></ion-avatar>
+              <ion-label>
+                {{ this.loginService.loggedUser }}
+              </ion-label>
+            </ion-item>
+          </ion-menu-toggle>
           <ion-menu-toggle auto-hide="false" *ngFor="let p of appPages">
             <ion-item [routerDirection]="'root'" [routerLink]="[p.url]">
               <ion-icon slot="start" [name]="p.icon"></ion-icon>
