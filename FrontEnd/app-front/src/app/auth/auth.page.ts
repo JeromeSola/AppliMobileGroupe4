@@ -25,7 +25,7 @@ export class AuthPage implements OnInit {
       .then(this.googleLogin)
       .then(success => {
         console.log(success)
-        this.http.get(`https://www.googleapis.com/gmail/v1/users/me/profile?access_token=${success.access_token}`)
+        this.http.get(`https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${success.access_token}`)
         .subscribe(data => {
           console.log(data);
           console.log("done")
@@ -47,7 +47,7 @@ export class AuthPage implements OnInit {
       const clientId = "158859845665-41mtdqsk18mc3uprpiu1ehuc58gggerb.apps.googleusercontent.com";
       const url = `https://accounts.google.com/o/oauth2/auth?client_id=${clientId}` +
         "&redirect_uri=	http://localhost:8100" +
-        "&scope=https://www.googleapis.com/auth/contacts.readonly https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/gmail.readonly" +
+        "&scope=https://www.googleapis.com/auth/contacts.readonly https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/userinfo.email" +
         "&response_type=token id_token";
       const browserRef = window.cordova.InAppBrowser.open(
         url,
