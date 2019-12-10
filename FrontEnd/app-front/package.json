@@ -9,7 +9,8 @@
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "get-keys": "scp -r souyahia@ssh.enseirb.fr:/net/t/souyahia/SCP_APIKeys/CoachMan/* ../../APIKeys"
   },
   "private": true,
   "dependencies": {
