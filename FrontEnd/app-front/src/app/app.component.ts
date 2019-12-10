@@ -27,6 +27,16 @@ export class AppComponent {
       title: 'Paramètres',
       url: '/settings',
       icon: 'settings'
+    },
+    {
+      title: 'List',
+      url: '/list',
+      icon: 'list'
+    },
+    {
+      title: 'Sign in',
+      url: '/auth',
+      icon: 'log-in'
     }
   ];
 

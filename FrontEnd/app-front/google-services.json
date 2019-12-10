@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "158859845665",
+    "firebase_url": "https://labgroup4-835fe.firebaseio.com",
+    "project_id": "labgroup4-835fe",
+    "storage_bucket": "labgroup4-835fe.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:158859845665:android:65cacd248fea2abe648360",
+        "android_client_info": {
+          "package_name": "io.ionic.coach"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "158859845665-80saobi3mv52f6p678347m647l24buvs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDHL_zdf4CEHTba--nrERrVOlyBy37honY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "158859845665-41mtdqsk18mc3uprpiu1ehuc58gggerb.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "158859845665-dinjrmsul8if16pah6vdcme2unj2krb1.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "io.ionic.coach"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

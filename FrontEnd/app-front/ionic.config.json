@@ -1,7 +1,8 @@
 {
   "name": "app-front",
   "integrations": {
-    "cordova": {}
+    "cordova": {},
+    "capacitor": {}
   },
   "type": "angular"
 }
