@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NavController, Platform } from '@ionic/angular';
 import { HttpClient } from '@angular/common/http';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
-
+import { googleId } from '../../../../../APIKeys/googleId'
 declare var window: any;
 @Component({
   selector: 'app-auth',
@@ -44,8 +44,7 @@ export class AuthPage implements OnInit {
  
   public googleLogin(): Promise<any> {
     return new Promise(function (resolve, reject) {
-      const clientId = "158859845665-41mtdqsk18mc3uprpiu1ehuc58gggerb.apps.googleusercontent.com";
-      const url = `https://accounts.google.com/o/oauth2/auth?client_id=${clientId}` +
+      const url = `https://accounts.google.com/o/oauth2/auth?client_id=${googleId}` +
         "&redirect_uri=	http://localhost:8100" +
         "&scope=https://www.googleapis.com/auth/contacts.readonly https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/userinfo.email" +
         "&response_type=token id_token";
