@@ -1,0 +1,17 @@
+/DialogFlow/test/*.log
+/DialogFlow/test/log.txt
+/DialogFlow/test/npm-debug.log*
+/DialogFlow/test/.idea
+/DialogFlow/test/.ionic
+/DialogFlow/test/.sass-cache
+/DialogFlow/test/.sourcemaps
+/DialogFlow/test/.versions
+/DialogFlow/test/.vscode
+/DialogFlow/test/coverage
+/DialogFlow/test/dist
+/DialogFlow/test/node_modules
+/DialogFlow/test/platforms
+/DialogFlow/test/plugins
+/DialogFlow/test/www
+APIKeys/*
+!APIKeys/README.md 

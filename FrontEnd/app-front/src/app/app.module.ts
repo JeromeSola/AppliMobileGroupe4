@@ -8,6 +8,10 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 
 import { MediaCapture } from '@ionic-native/media-capture/ngx';
 
+import { AngularFireModule } from '@angular/fire';
+import { environment } from '../environments/environment';
+import { AngularFirestoreModule, FirestoreSettingsToken } from '@angular/fire/firestore';
+
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { ComponentsModule } from './components/components.module';
@@ -26,6 +30,8 @@ import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
     IonicModule.forRoot(),
     AppRoutingModule,
     ComponentsModule,
+    AngularFireModule.initializeApp(environment.firebase),
+    AngularFirestoreModule
   ],
   providers: [
     StatusBar,
@@ -33,8 +39,8 @@ import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
     MediaCapture,
     AuthService,
     InAppBrowser,
-    
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    { provide: FirestoreSettingsToken, useValue: {} }
   ],
   bootstrap: [
     AppComponent

@@ -22,6 +22,11 @@ export class AppComponent {
       icon: 'chatboxes'
     },
     {
+      title: 'Profil',
+      url: '/profile/mdupont',
+      icon: 'contact'
+    },
+    {
       title: 'Paramètres',
       url: '/settings',
       icon: 'settings'
