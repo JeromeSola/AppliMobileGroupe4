@@ -9,18 +9,29 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 
-import { TextToSpeech } from '@ionic-native/text-to-speech/ngx';
+import { HomePageModule } from './home/home.module';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule  } from '@angular/forms';
 
 @NgModule({
   declarations: [AppComponent],
-  entryComponents: [],
-  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule],
+  entryComponents: [AppComponent],
+  bootstrap: [AppComponent],
+  //bootstrap: [IonicApp],
+  imports: [
+    BrowserModule, 
+    IonicModule.forRoot(), 
+    AppRoutingModule,
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    HomePageModule
+  ],
   providers: [
     StatusBar,
     SplashScreen,
-    TextToSpeech,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
-  ],
-  bootstrap: [AppComponent]
+  ]
 })
 export class AppModule {}

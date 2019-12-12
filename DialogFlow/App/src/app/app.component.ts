@@ -4,7 +4,7 @@ import { Platform } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 
-declare var ApiAIPlugin: any;
+import { HomePage } from './home/home.page';
 
 @Component({
   selector: 'app-root',
@@ -12,6 +12,8 @@ declare var ApiAIPlugin: any;
   styleUrls: ['app.component.scss']
 })
 export class AppComponent {
+  rootPage: any = HomePage;
+
   constructor(
     private platform: Platform,
     private splashScreen: SplashScreen,
@@ -24,18 +26,6 @@ export class AppComponent {
     this.platform.ready().then(() => {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
-      try{
-        ApiAIPlugin.init(
-        {
-            clientAccessToken: "ce1a8addc8af41c0b57af2174d8da4ed", // insert your client access key here
-            lang: "en" // set lang tag from list of supported languages
-        },
-        function(result) { console.log(result) },
-        function(error) { console.log(error)  }
-      );
-      }catch(e){
-        alert(e); 
-      }
     });
   }
 }
