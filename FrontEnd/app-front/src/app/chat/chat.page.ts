@@ -5,6 +5,8 @@ import { MediaCapture, MediaFile, CaptureError, CaptureAudioOptions } from '@ion
 
 import { Message } from './message';
 
+import { TextToSpeech } from '@ionic-native/text-to-speech/ngx';
+
 const SCROLL_ANIMATION_DURATION: number = 500;
 
 @Component({
@@ -20,14 +22,24 @@ export class ChatPage implements OnInit, AfterViewInit {
   private _messageList: Message[] = [];
   private _lastAudio: MediaFile = null; 
 
-  constructor(private mediaCapture: MediaCapture) { }
+  constructor(private mediaCapture: MediaCapture,private tts: TextToSpeech) { }
 
   ngOnInit() {
     this.messageList = Message.getMockList();
+    
   }
 
   ngAfterViewInit() {
     this.scrollToBottom();
+  }
+
+  readAssistantMessage(message){
+    this.tts.speak({
+      text:message,
+      locale: 'fr-FR'
+    })
+    .then(() => console.log('Success'))
+    .catch((reason: any) => console.log(reason));
   }
 
   scrollToBottom(): void { this.content.scrollToBottom(SCROLL_ANIMATION_DURATION); }
@@ -37,6 +49,7 @@ export class ChatPage implements OnInit, AfterViewInit {
       let sendDate = new Date();
       this.messageList.push(new Message(this.userInput, true, sendDate));
       this.messageList.push(new Message('Je n\'ai pas compris.', false, sendDate));
+      this.readAssistantMessage('Je n\'ai pas compris.')
       this.userInput = '';
       this.scrollToBottom();
     }

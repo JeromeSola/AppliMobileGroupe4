@@ -20,7 +20,7 @@
               <ion-item [routerDirection]="'root'" [routerLink]="['/profile', this.loginService.loggedUser]">
                 <ion-avatar slot="start"><img src="../../assets/img/default-avatar.png"></ion-avatar>
                 <ion-label>
-                  {{ this.loginService.loggedUser }}
+                  {{ this.loginService.loggedUser.firstName }} {{ this.loginService.loggedUser.lastName }}
                 </ion-label>
               </ion-item>
             </ion-menu-toggle>
@@ -46,7 +46,7 @@
       <ion-footer>
         <ion-row *ngIf="loginService.isLoggedIn()">
           <ion-col class="login-row">
-            <ion-button color="danger" (click)="loginService.loggedUser = null" routerLink="/home" shape="round" size="default">
+            <ion-button color="danger" (click)="loginService.logOut()" routerLink="/home" shape="round" size="default">
               Se Déconnecter
             </ion-button>
           </ion-col>
