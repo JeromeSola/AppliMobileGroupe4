@@ -18,6 +18,8 @@ import { ComponentsModule } from './components/components.module';
 
 import  { AuthService } from './auth.service';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
+
+import { LoginService } from './services/login.service';
 @NgModule({
   declarations: [
     AppComponent
@@ -40,7 +42,8 @@ import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
     AuthService,
     InAppBrowser,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    { provide: FirestoreSettingsToken, useValue: {} }
+    { provide: FirestoreSettingsToken, useValue: {} },
+    LoginService
   ],
   bootstrap: [
     AppComponent

@@ -27,11 +27,6 @@ export class AppComponent {
       title: 'Paramètres',
       url: '/settings',
       icon: 'settings'
-    },
-    {
-      title: 'Sign in',
-      url: '/auth',
-      icon: 'log-in'
     }
   ];
 
@@ -51,7 +46,4 @@ export class AppComponent {
     });
   }
 
-  isUserLogged() {
-    return ( this.loginService.loggedUser != null );
-  }
 }
