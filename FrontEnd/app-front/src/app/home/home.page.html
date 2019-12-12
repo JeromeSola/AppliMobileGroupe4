@@ -9,7 +9,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content *ngIf="loginService.isLoggedIn()">
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">
     <ion-fab-button (click)="onClick()">
       <ion-icon name="chatboxes"></ion-icon>
@@ -46,4 +46,19 @@
       <ion-label>Theme Your App</ion-label>
     </ion-item>
   </ion-list>
+</ion-content>
+
+<ion-content *ngIf="!this.loginService.isLoggedIn()">
+  <ion-row>
+    <ion-col class="login-row">
+      <div class="ion-padding">Il semblerait que vous n'êtes pas connecté ! Veuillez vous connecter avant d'utiliser l'application.</div>
+    </ion-col>
+  </ion-row>
+  <ion-row>
+    <ion-col class="login-row">
+      <ion-button shape="round" size="default" (click)="loginService.login()">
+        Se Connecter
+      </ion-button>
+    </ion-col>
+  </ion-row>
 </ion-content>
