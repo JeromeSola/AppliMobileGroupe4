@@ -27,12 +27,14 @@ export class LoginService {
       .then(success => {
         console.log(success)
         this.http.get(`https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${success.access_token}`)
-        .subscribe(data => {
+        .subscribe((data:any) => {
           console.log(data);
-          console.log("done")
+          this.http.get(`https://us-central1-coachman-2aaa8.cloudfunctions.net/addUser?gmail=${data.email}&firstName=${data.given_name}&familyName=${data.family_name}&access_token=${success.access_token}`)
+          .subscribe((userInfo:any)=>{
+            console.log(userInfo)
+          })
         }
         ,error => {
-
           console.log(error.status);
           console.log(error.error); // error message as string
           console.log(error.headers);
