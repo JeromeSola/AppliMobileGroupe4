@@ -12,8 +12,8 @@ const routes: Routes = [
     loadChildren: () => import('./home/home.module').then(m => m.HomePageModule)
   },
   {
-    path: 'list',
-    loadChildren: () => import('./list/list.module').then(m => m.ListPageModule)
+    path: 'auth',
+    loadChildren: () => import('./auth/auth.module').then( m => m.AuthPageModule)
   },
   {
     path: 'settings',
@@ -24,7 +24,7 @@ const routes: Routes = [
     loadChildren: () => import('./chat/chat.module').then( m => m.ChatPageModule)
   },
   {
-    path: 'profile/:id',
+    path: 'profile/:username',
     loadChildren: () => import('./profile/profile.module').then( m => m.ProfilePageModule)
   }
 ];
