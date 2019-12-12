@@ -13,5 +13,12 @@
 /DialogFlow/test/platforms
 /DialogFlow/test/plugins
 /DialogFlow/test/www
-APIKeys/*
-!APIKeys/README.md 
+/APIKeys/*
+/!APIKeys/README.md 
+/FrontEnd/app-front/android
+/FrontEnd/app-front/capacitor.config.json
+/FrontEnd/app-front/node_modules
+/FrontEnd/app-front/platforms
+/FrontEnd/app-front/plugins
+/FrontEnd/app-front/www
+
