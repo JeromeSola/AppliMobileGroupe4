@@ -1,7 +1,11 @@
 import { Injectable } from '@angular/core';
+
 import { Platform } from '@ionic/angular';
 import { HttpClient } from '@angular/common/http';
-import { googleId } from '../../../../../APIKeys/googleId'
+import { googleId } from '../../../../../APIKeys/googleId';
+
+import { UserCloudFuncService } from './user-cloud-func.service';
+import { UserInfo } from './user.service';
 
 declare var window: any;
 
@@ -10,38 +14,45 @@ declare var window: any;
 })
 export class LoginService {
 
-  public loggedUser: string;
+  public loggedUser: UserInfo;
 
   constructor(private http: HttpClient,
-    private platform: Platform) {
+    private platform: Platform,
+    private cloudFunc: UserCloudFuncService
+    ) {
     this.loggedUser = null;
   }
 
-  public isLoggedIn() {
+  public isLoggedIn(): boolean {
     return (this.loggedUser != null);
+  }
+
+  public logOut(): void {
+    this.loggedUser = null;
   }
 
   public login() {
     this.platform.ready()
       .then(this.googleLogin)
       .then(success => {
-        console.log(success)
         this.http.get(`https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${success.access_token}`)
-        .subscribe((data:any) => {
-          console.log(data);
-          this.http.get(`https://us-central1-coachman-2aaa8.cloudfunctions.net/addUser?gmail=${data.email}&firstName=${data.given_name}&familyName=${data.family_name}&access_token=${success.access_token}`)
-          .subscribe((userInfo:any)=>{
-            console.log(userInfo)
+        .subscribe((data: any) => {
+          let gmail = data.email;
+          let firstName = data.given_name;
+          let lastName = data.family_name;
+          let access_token = success.access_token;
+          this.cloudFunc.onUserLogin(gmail, firstName, lastName, access_token)
+          .subscribe((userInfo: UserInfo) => {
+            this.loggedUser = userInfo;
           })
         }
-        ,error => {
-          console.log(error.status);
-          console.log(error.error); // error message as string
-          console.log(error.headers);
-
+        , error => {
+          console.error(error.status);
+          console.error(error.error); 
+          console.error(error.headers);
         });
       }, (error) => {
-        alert(error);
+        console.error(error);
       });
   };
  
