@@ -29,11 +29,6 @@ export class AppComponent {
       icon: 'settings'
     },
     {
-      title: 'List',
-      url: '/list',
-      icon: 'list'
-    },
-    {
       title: 'Sign in',
       url: '/auth',
       icon: 'log-in'
