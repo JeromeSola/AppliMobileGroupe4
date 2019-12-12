@@ -42,3 +42,101 @@ export const onUserLogin = functions.https.onRequest((request, response) => {
       }          
   })
 });
+
+
+//Get avec argument gmail(pour désigner l'utilisateur)
+exports.deleteUser = functions.https.onRequest(async (req, res) => {
+    db.collection("Users").get().then(function(querySnapshot: any) {
+        querySnapshot.forEach(function(doc: any) {
+            // doc.data() is never undefined for query doc snapshots
+            console.log(doc.id, " => ", doc.data());
+            if (doc.data().gmail === req.query.gmail ){
+                db.collection("Users").doc(doc.id).delete()
+            }
+        }).catch((err: any) => {
+        console.error(err);
+        return res.status(404).send({ error: 'unable to store', err });
+      });  
+    });
+});
+
+//Get avec arguments gmail(pour désigner l'utilisateur) et newFirstName
+exports.updateUserFirstName = functions.https.onRequest(async (req, res) => {
+    db.collection("Users").get().then(function(querySnapshot: any) {
+        querySnapshot.forEach(function(doc: any) {
+            // doc.data() is never undefined for query doc snapshots
+            console.log(doc.id, " => ", doc.data());
+            if (doc.data().gmail === req.query.gmail ){
+                db.collection("Users").doc(doc.id).update({
+				firstName : req.query.newFirstName				
+				})
+            }
+        }).then ( (doc: any) => {
+                    return res.status(200).send(doc);
+        }).catch((err: any) => {
+        console.error(err);
+        return res.status(404).send({ error: 'unable to store', err });
+      });       
+    });
+})
+
+//Get avec arguments gmail(pour désigner l'utilisateur) et newLastName
+exports.updateUserLastName = functions.https.onRequest(async (req, res) => {
+    db.collection("Users").get().then(function(querySnapshot: any) {
+        querySnapshot.forEach(function(doc: any) {
+            // doc.data() is never undefined for query doc snapshots
+            console.log(doc.id, " => ", doc.data());
+            if (doc.data().gmail === req.query.gmail ){
+                db.collection("Users").doc(doc.id).update({
+				lastName: req.query.newLastName				
+				})
+            }
+        }).then ( (doc: any) => {
+                    return res.status(200).send(doc);
+        }).catch((err: any) => {
+        console.error(err);
+        return res.status(404).send({ error: 'unable to store', err });
+      });       
+    });
+})
+
+//Get avec arguments gmail(pour désigner l'utilisateur) et newUserName
+exports.updateUserUserName = functions.https.onRequest(async (req, res) => {
+    db.collection("Users").get().then(function(querySnapshot: any) {
+        querySnapshot.forEach(function(doc: any) {
+            // doc.data() is never undefined for query doc snapshots
+            console.log(doc.id, " => ", doc.data());
+            if (doc.data().gmail === req.query.gmail ){
+                db.collection("Users").doc(doc.id).update({
+				userName : req.query.newUserName			
+				})
+            }
+        }).then ( (doc: any) => {
+                    return res.status(200).send(doc);
+        }).catch((err: any) => {
+        console.error(err);
+        return res.status(404).send({ error: 'unable to store', err });
+      });       
+    });
+})
+
+
+//Get avec arguments gmail(pour désigner l'utilisateur) et newAccessToken
+exports.updateUserAccessToken = functions.https.onRequest(async (req, res) => {
+    db.collection("Users").get().then(function(querySnapshot: any) {
+        querySnapshot.forEach(function(doc: any) {
+            // doc.data() is never undefined for query doc snapshots
+            console.log(doc.id, " => ", doc.data());
+            if (doc.data().gmail === req.query.gmail ){
+                db.collection("Users").doc(doc.id).update({
+				access_token : req.query.newAccessToken		
+				})
+            }
+        }).then ( (doc: any) => {
+                    return res.status(200).send(doc);
+        }).catch((err: any) => {
+        console.error(err);
+        return res.status(404).send({ error: 'unable to store', err });
+      });       
+    });
+})
