@@ -7,9 +7,9 @@ export interface UserInfo {
   id?: string,
   username: string,
   gmail: string,
-  firstname: string,
-  lastname: string,
-  birth: string
+  firstName: string,
+  lastName: string,
+  access_token: string
 }
 
 @Injectable({

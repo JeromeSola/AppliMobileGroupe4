@@ -7,9 +7,9 @@ const db = new Firestore({
 });
 
 function getUsernameFromMail(gmail: string): string {
-  const reg = new RegExp('(.+)@(?:.+)', 'i');
+  const reg = new RegExp('(.+)@([^.]+).(.+)', 'i');
   const result = gmail.match(reg);
-  return (result === null) ? 'unknown' : result[1];
+  return (result === null) ? 'unknown' : result[1] + '_' + result[2] + '_' + result[3];
 }
 
 export const onUserLogin = functions.https.onRequest((request, response) => {
