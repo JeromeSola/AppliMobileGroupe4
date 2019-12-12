@@ -5,6 +5,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
+import { TextToSpeech } from '@ionic-native/text-to-speech/ngx';
 
 import { MediaCapture } from '@ionic-native/media-capture/ngx';
 
@@ -41,6 +42,7 @@ import { LoginService } from './services/login.service';
     MediaCapture,
     AuthService,
     InAppBrowser,
+    TextToSpeech,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: FirestoreSettingsToken, useValue: {} },
     LoginService

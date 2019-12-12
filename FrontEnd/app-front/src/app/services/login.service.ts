@@ -35,6 +35,7 @@ export class LoginService {
     this.platform.ready()
       .then(this.googleLogin)
       .then(success => {
+        console.log(success)
         this.http.get(`https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${success.access_token}`)
         .subscribe((data: any) => {
           let gmail = data.email;
