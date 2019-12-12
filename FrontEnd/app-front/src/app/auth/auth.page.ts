@@ -20,7 +20,6 @@ export class AuthPage implements OnInit {
   }
 
   public login() {
-    console.log("ok")
     this.platform.ready()
       .then(this.googleLogin)
       .then(success => {
