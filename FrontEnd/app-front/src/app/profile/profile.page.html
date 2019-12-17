@@ -31,13 +31,15 @@
           </ion-avatar>
       </ion-row>
     </ion-grid>
-
-    <div *ngIf="displayedUser">
-      {{this.displayedUser.username}}
+    <div class="content-wrapper">
+      <div class="display-name">
+        <div *ngIf="displayedUser">
+          {{this.displayedUser.firstName}} {{this.displayedUser.lastName}}
+        </div>
+        <div *ngIf="!displayedUser">
+          Unknown user : {{ username }}
+        </div>
+      </div>
+      <!--Reste du body ici-->
     </div>
-
-    <div *ngIf="!displayedUser">
-      Unknown user : {{ username }}
-    </div>
-    
 </ion-content>

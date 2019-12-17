@@ -21,3 +21,13 @@ div.border-wrapper > ion-img {
     max-height : 120px !important;
     border: 4px solid white;
 }
+.display-name {
+    width: 100%;
+    font-weight: bold;
+    font-size: large;
+    text-align: center;
+}
+.content-wrapper {
+    position: relative;
+    top: -60px;
+}

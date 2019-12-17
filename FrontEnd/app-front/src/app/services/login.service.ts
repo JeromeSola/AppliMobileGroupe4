@@ -24,7 +24,7 @@ export class LoginService {
     private storageService: StorageService,
     private router: Router,
     private userService: UserService
-    ) {
+  ) {
     this.loggedUser = null;
   }
 
