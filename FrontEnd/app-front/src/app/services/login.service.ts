@@ -5,7 +5,9 @@ import { HttpClient } from '@angular/common/http';
 import { googleId } from '../../../../../APIKeys/googleId';
 
 import { UserCloudFuncService } from './user-cloud-func.service';
-import { UserInfo } from './user.service';
+import { UserInfo, UserService } from './user.service';
+import { StorageService, KEYS } from '../services/storage.service';
+import { Router } from '@angular/router';
 
 declare var window: any;
 
@@ -18,7 +20,10 @@ export class LoginService {
 
   constructor(private http: HttpClient,
     private platform: Platform,
-    private cloudFunc: UserCloudFuncService
+    private cloudFunc: UserCloudFuncService,
+    private storageService: StorageService,
+    private router: Router,
+    private userService: UserService
     ) {
     this.loggedUser = null;
   }
@@ -28,7 +33,20 @@ export class LoginService {
   }
 
   public logOut(): void {
+    this.storageService.removeItem(KEYS.LAST_USER_LOGGED);
     this.loggedUser = null;
+    this.router.navigateByUrl('/home');
+  }
+
+  public loginAs(gmail: string) {
+    this.userService.queryByGmail(gmail)
+    .subscribe((users: UserInfo[]) => {
+      let firstLogin: boolean = false;
+      if (this.loggedUser === null || this.loggedUser === undefined) { firstLogin = true;}
+      this.loggedUser = users[0];
+      this.storageService.setItem(KEYS.LAST_USER_LOGGED, this.loggedUser);
+      if (firstLogin) { this.router.navigateByUrl('/home'); }
+    });
   }
 
   public login() {
@@ -38,14 +56,15 @@ export class LoginService {
         console.log(success)
         this.http.get(`https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${success.access_token}`)
         .subscribe((data: any) => {
+          this.router.navigateByUrl('/loading');
           let gmail = data.email;
           let firstName = data.given_name;
           let lastName = data.family_name;
           let access_token = success.access_token;
           this.cloudFunc.onUserLogin(gmail, firstName, lastName, access_token)
           .subscribe((userInfo: UserInfo) => {
-            this.loggedUser = userInfo;
-          })
+            this.loginAs(userInfo.gmail);
+          });
         }
         , error => {
           console.error(error.status);

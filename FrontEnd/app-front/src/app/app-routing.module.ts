@@ -29,6 +29,10 @@ const routes: Routes = [
   },  {
     path: 'dialogflow',
     loadChildren: () => import('./dialogflow/dialogflow.module').then( m => m.DialogflowPageModule)
+  },
+  {
+    path: 'loading',
+    loadChildren: () => import('./loading/loading.module').then( m => m.LoadingPageModule)
   }
 
 ];
