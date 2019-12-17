@@ -36,6 +36,9 @@
       </div>
     </ion-list>
   </div>
+  <div *ngIf="isLoading" class="bot-loading-container">
+    <ion-spinner name="dots"></ion-spinner>
+  </div>
 </ion-content>
 
 <ion-footer no-border>

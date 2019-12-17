@@ -1,11 +1,13 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
-import { IonContent } from '@ionic/angular';
+import { IonContent,Platform } from '@ionic/angular';
 
 import { MediaCapture, MediaFile, CaptureError, CaptureAudioOptions } from '@ionic-native/media-capture/ngx';
-
+import { ApiAiClient } from 'api-ai-javascript/es6/ApiAiClient'
 import { Message } from './message';
-
+import { accessToken } from '../../../../../APIKeys/dialogflow';
 import { TextToSpeech } from '@ionic-native/text-to-speech/ngx';
+
+import { FormControl} from '@angular/forms';
 
 const SCROLL_ANIMATION_DURATION: number = 500;
 
@@ -21,11 +23,14 @@ export class ChatPage implements OnInit, AfterViewInit {
   private _userInput: string = '';
   private _messageList: Message[] = [];
   private _lastAudio: MediaFile = null; 
-
-  constructor(private mediaCapture: MediaCapture,private tts: TextToSpeech) { }
+  isLoading: boolean;
+  client;
+  
+  constructor(private mediaCapture: MediaCapture,private tts: TextToSpeech,public platform: Platform) { }
 
   ngOnInit() {
     this.messageList = Message.getMockList();
+    this.client = new ApiAiClient({accessToken: accessToken});
     
   }
 
@@ -48,10 +53,24 @@ export class ChatPage implements OnInit, AfterViewInit {
     if (this.userInput) {
       let sendDate = new Date();
       this.messageList.push(new Message(this.userInput, true, sendDate));
-      this.messageList.push(new Message('Je n\'ai pas compris.', false, sendDate));
-      this.readAssistantMessage('Je n\'ai pas compris.')
+      this.isLoading = true;
+
+      this.client
+      .textRequest(this.userInput)
+      .then(response => {
+        console.log(response);
+        this.messageList.push(new Message(response.result.fulfillment.speech, false, sendDate))
+        this.isLoading = false;
+        this.scrollToBottom();
+        this.readAssistantMessage(response.result.fulfillment.speech)
+      })
+      .catch(error => {
+        console.log('error');
+        console.log(error);
+      });
+      
       this.userInput = '';
-      this.scrollToBottom();
+
     }
   }
 

@@ -27,11 +27,6 @@ export class AppComponent {
       title: 'Paramètres',
       url: '/settings',
       icon: 'settings'
-    },
-    {
-      title: 'DialogFlow',
-      url: '/dialogflow',
-      icon: 'home'
     }
   ];
 

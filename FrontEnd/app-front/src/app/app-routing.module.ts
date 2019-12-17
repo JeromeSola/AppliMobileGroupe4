@@ -26,9 +26,6 @@ const routes: Routes = [
   {
     path: 'profile/:username',
     loadChildren: () => import('./profile/profile.module').then( m => m.ProfilePageModule)
-  },  {
-    path: 'dialogflow',
-    loadChildren: () => import('./dialogflow/dialogflow.module').then( m => m.DialogflowPageModule)
   }
 
 ];
