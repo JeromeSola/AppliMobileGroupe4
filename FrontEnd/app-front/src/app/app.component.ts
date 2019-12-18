@@ -5,6 +5,7 @@ import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 
 import { LoginService } from 'src/app/services/login.service';
+import { StorageService, KEYS } from './services/storage.service';
 
 @Component({
   selector: 'app-root',
@@ -29,14 +30,9 @@ export class AppComponent {
       icon: 'settings'
     },
     {
-      title: 'List',
-      url: '/list',
-      icon: 'list'
-    },
-    {
-      title: 'Sign in',
-      url: '/auth',
-      icon: 'log-in'
+      title: 'DialogFlow',
+      url: '/dialogflow',
+      icon: 'home'
     }
   ];
 
@@ -44,7 +40,8 @@ export class AppComponent {
     private platform: Platform,
     private splashScreen: SplashScreen,
     private statusBar: StatusBar,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private storageService: StorageService
   ) {
     this.initializeApp();
   }
@@ -53,10 +50,16 @@ export class AppComponent {
     this.platform.ready().then(() => {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
+      this.storageService.getItem(KEYS.LAST_USER_LOGGED)
+      .then((resolve) => {
+        if (resolve !== undefined && resolve.gmail != undefined) { this.loginService.loginAs(resolve.gmail); }
+      }, (reject) => {
+        if (reject.code !== 2) {
+          console.error('Unknown native storage error :');
+          console.error(reject);
+        }
+      });
     });
   }
 
-  isUserLogged() {
-    return ( this.loginService.loggedUser != null );
-  }
 }

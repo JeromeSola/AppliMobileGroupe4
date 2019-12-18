@@ -1,0 +1,47 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>
+      Édition du profil
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <div class="border-wrapper" (click)="onEditBanner()">
+        <ion-img src="../../assets/img/default-cover.png"></ion-img>
+    </div>
+    <ion-grid class="avatar-wrapper">
+      <ion-row class="ion-justify-content-center">
+          <ion-avatar class="user-avatar" (click)="onEditProfilePic()">
+            <img src="../../assets/img/default-avatar.png">
+          </ion-avatar>
+      </ion-row>
+    </ion-grid>
+    <div class="content-wrapper">
+      <ion-list>
+        <ion-item>
+          <div class="input-legend" slot="start">
+            Prénom : 
+          </div>
+          <ion-input class="input-field" [(ngModel)]="currentInfo.firstName" placeholder="Prénom"></ion-input>
+        </ion-item>
+        <ion-item>
+          <div class="input-legend" slot="start">
+            Nom de famille : 
+          </div>
+          <ion-input class="input-field" [(ngModel)]="currentInfo.lastName" placeholder="Nom de famille"></ion-input>
+        </ion-item>
+      </ion-list>
+      <ion-row>
+        <ion-col class="center-row">
+          <ion-button (click)="onClickSend()" size="default" [disabled]="!isValidInfo()">
+            Valider
+          </ion-button>
+        </ion-col>
+      </ion-row>
+      <!--Reste du body ici-->
+    </div>
+</ion-content>
