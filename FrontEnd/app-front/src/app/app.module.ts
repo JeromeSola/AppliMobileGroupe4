@@ -21,6 +21,7 @@ import  { AuthService } from './auth.service';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 
 import { LoginService } from './services/login.service';
+import { NativeStorage } from '@ionic-native/native-storage/ngx';
 @NgModule({
   declarations: [
     AppComponent
@@ -45,7 +46,8 @@ import { LoginService } from './services/login.service';
     TextToSpeech,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: FirestoreSettingsToken, useValue: {} },
-    LoginService
+    LoginService,
+    NativeStorage
   ],
   bootstrap: [
     AppComponent
