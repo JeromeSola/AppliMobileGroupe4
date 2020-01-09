@@ -6,7 +6,6 @@ import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { TextToSpeech } from '@ionic-native/text-to-speech/ngx';
-
 import { MediaCapture } from '@ionic-native/media-capture/ngx';
 
 import { AngularFireModule } from '@angular/fire';
@@ -16,7 +15,7 @@ import { AngularFirestoreModule, FirestoreSettingsToken } from '@angular/fire/fi
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { ComponentsModule } from './components/components.module';
-
+import {HTTP} from '@ionic-native/http/ngx'
 import  { AuthService } from './auth.service';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 
@@ -47,7 +46,8 @@ import { NativeStorage } from '@ionic-native/native-storage/ngx';
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: FirestoreSettingsToken, useValue: {} },
     LoginService,
-    NativeStorage
+    NativeStorage,
+    HTTP,
   ],
   bootstrap: [
     AppComponent

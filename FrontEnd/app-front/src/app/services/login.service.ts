@@ -65,10 +65,10 @@ export class LoginService {
           .subscribe((userInfo: UserInfo) => {
             this.cloudFunc.UpdateUserAccessToken(gmail,access_token)
             .subscribe((info:any)=>{
-              console.log(info)
+              this.loginAs(userInfo.gmail);
             },(error) => {
               console.error(error)})
-            this.loginAs(userInfo.gmail);
+            
           });
         }
         , error => {
@@ -85,7 +85,7 @@ export class LoginService {
     return new Promise(function (resolve, reject) {
       const url = `https://accounts.google.com/o/oauth2/auth?client_id=${googleId}` +
         "&redirect_uri=	http://localhost:8100" +
-        "&scope=https://www.googleapis.com/auth/contacts.readonly https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/fitness.activity.write  https://www.googleapis.com/auth/fitness.activity.read https://www.googleapis.com/auth/calendar  https://www.googleapis.com/auth/calendar.events"+
+        "&scope=https://www.googleapis.com/auth/contacts.readonly https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/fitness.activity.write  https://www.googleapis.com/auth/fitness.activity.read https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/calendar.events"+
         "&response_type=token id_token";
       const browserRef = window.cordova.InAppBrowser.open(
         url,
