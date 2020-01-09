@@ -44,8 +44,9 @@ export const onUserLogin = functions.https.onRequest((request, response) => {
 });
 
 
-//Get avec argument gmail(pour désigner l'utilisateur)
+//Get avec argument gmail(pour dï¿½signer l'utilisateur)
 exports.deleteUser = functions.https.onRequest(async (req, res) => {
+    res.set('Access-Control-Allow-Origin', '*');
     db.collection("Users").get().then(function(querySnapshot: any) {
         querySnapshot.forEach(function(doc: any) {
             // doc.data() is never undefined for query doc snapshots
@@ -60,8 +61,9 @@ exports.deleteUser = functions.https.onRequest(async (req, res) => {
     });
 });
 
-//Get avec arguments gmail(pour désigner l'utilisateur) et newFirstName
+//Get avec arguments gmail(pour dï¿½signer l'utilisateur) et newFirstName
 exports.updateUserFirstName = functions.https.onRequest(async (req, res) => {
+    res.set('Access-Control-Allow-Origin', '*');
     db.collection("Users").get().then(function(querySnapshot: any) {
         querySnapshot.forEach(function(doc: any) {
             // doc.data() is never undefined for query doc snapshots
@@ -80,8 +82,9 @@ exports.updateUserFirstName = functions.https.onRequest(async (req, res) => {
     });
 })
 
-//Get avec arguments gmail(pour désigner l'utilisateur) et newLastName
+//Get avec arguments gmail(pour dï¿½signer l'utilisateur) et newLastName
 exports.updateUserLastName = functions.https.onRequest(async (req, res) => {
+    res.set('Access-Control-Allow-Origin', '*');
     db.collection("Users").get().then(function(querySnapshot: any) {
         querySnapshot.forEach(function(doc: any) {
             // doc.data() is never undefined for query doc snapshots
@@ -100,8 +103,9 @@ exports.updateUserLastName = functions.https.onRequest(async (req, res) => {
     });
 })
 
-//Get avec arguments gmail(pour désigner l'utilisateur) et newUserName
+//Get avec arguments gmail(pour dï¿½signer l'utilisateur) et newUserName
 exports.updateUserUserName = functions.https.onRequest(async (req, res) => {
+    res.set('Access-Control-Allow-Origin', '*');
     db.collection("Users").get().then(function(querySnapshot: any) {
         querySnapshot.forEach(function(doc: any) {
             // doc.data() is never undefined for query doc snapshots
@@ -121,15 +125,16 @@ exports.updateUserUserName = functions.https.onRequest(async (req, res) => {
 })
 
 
-//Get avec arguments gmail(pour désigner l'utilisateur) et newAccessToken
+//Get avec arguments gmail(pour dï¿½signer l'utilisateur) et newAccessToken
 exports.updateUserAccessToken = functions.https.onRequest(async (req, res) => {
+    res.set('Access-Control-Allow-Origin', '*');
     db.collection("Users").get().then(function(querySnapshot: any) {
         querySnapshot.forEach(function(doc: any) {
             // doc.data() is never undefined for query doc snapshots
             console.log(doc.id, " => ", doc.data());
             if (doc.data().gmail === req.query.gmail ){
                 db.collection("Users").doc(doc.id).update({
-				access_token : req.query.newAccessToken		
+				access_token : req.query.new_access_token		
 				})
             }
         }).then ( (doc: any) => {
