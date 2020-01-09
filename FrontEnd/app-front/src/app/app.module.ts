@@ -16,11 +16,15 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { ComponentsModule } from './components/components.module';
 import {HTTP} from '@ionic-native/http/ngx'
-import  { AuthService } from './auth.service';
+
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 
 import { LoginService } from './services/login.service';
+import {GoogleFitService} from './services/google-fit.service';
 import { NativeStorage } from '@ionic-native/native-storage/ngx';
+
+import { Pedometer } from '@ionic-native/pedometer/ngx';
+
 @NgModule({
   declarations: [
     AppComponent
@@ -37,10 +41,11 @@ import { NativeStorage } from '@ionic-native/native-storage/ngx';
     AngularFirestoreModule
   ],
   providers: [
+    GoogleFitService,
+    Pedometer,
     StatusBar,
     SplashScreen,
     MediaCapture,
-    AuthService,
     InAppBrowser,
     TextToSpeech,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },

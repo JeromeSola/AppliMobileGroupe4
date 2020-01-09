@@ -1,0 +1,25 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      Test with google fit
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content fullscreen>
+  <br />
+  <br />
+  <section>
+    <ion-button expand="full" color="secondary" (click)="startPedometer()">Start</ion-button>
+    <ion-button expand="full" color="secondary" (click)="stopPedometer()">Stop</ion-button>
+  </section>
+  <br />
+  <br />
+  <section>
+    <ion-item>
+      <ion-label>Steps:</ion-label>
+      <ion-note slot="end" color="primary">{{stepsCount}}</ion-note>
+    </ion-item>
+  </section>
+
+</ion-content>

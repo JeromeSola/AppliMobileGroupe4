@@ -28,8 +28,14 @@ export const onUserLogin = functions.https.onRequest((request, response) => {
           gmail: request.query.gmail,
           firstName: request.query.firstName,
           lastName: request.query.lastName,
+          firstNameLower: request.query.firstName.toLowerCase(),
+          lastNameLower: request.query.lastName.toLowerCase(),
           username: username,
-          access_token: request.query.access_token
+          access_token: request.query.access_token,
+          friends: [],
+          level: 0,
+          totalExperience: 0,
+          achievements: []
         }
         db.collection('Users')
         .add(userDoc)
@@ -44,104 +50,351 @@ export const onUserLogin = functions.https.onRequest((request, response) => {
 });
 
 
-//Get avec argument gmail(pour d�signer l'utilisateur)
+/*  
+    Requête Get 
+    arguments http :
+        gmail : adresse gmail de l'utilisateur à supprimer
+*/
 exports.deleteUser = functions.https.onRequest(async (req, res) => {
     res.set('Access-Control-Allow-Origin', '*');
-    db.collection("Users").get().then(function(querySnapshot: any) {
-        querySnapshot.forEach(function(doc: any) {
-            // doc.data() is never undefined for query doc snapshots
+    db.collection("Users").get().then(function (querySnapshot: any) {
+        querySnapshot.forEach(function (doc: any) {            
             console.log(doc.id, " => ", doc.data());
-            if (doc.data().gmail === req.query.gmail ){
+            if (doc.data().gmail === req.query.gmail) {
                 db.collection("Users").doc(doc.id).delete()
             }
+        }).then((doc: any) => {
+            return res.status(200).send(doc);
         }).catch((err: any) => {
-        console.error(err);
-        return res.status(404).send({ error: 'unable to store', err });
-      });  
+            console.error(err);
+            return res.status(404).send({ error: 'unable to store', err });
+        });
     });
 });
 
-//Get avec arguments gmail(pour d�signer l'utilisateur) et newFirstName
+/*  
+    Requête Get 
+    arguments http :
+        gmail : adresse gmail de l'utilisateur 
+        newFirstName : nouveau prénom
+*/
 exports.updateUserFirstName = functions.https.onRequest(async (req, res) => {
     res.set('Access-Control-Allow-Origin', '*');
-    db.collection("Users").get().then(function(querySnapshot: any) {
-        querySnapshot.forEach(function(doc: any) {
-            // doc.data() is never undefined for query doc snapshots
+    db.collection("Users").get().then(function (querySnapshot: any) {
+        querySnapshot.forEach(function (doc: any) {
+            
             console.log(doc.id, " => ", doc.data());
-            if (doc.data().gmail === req.query.gmail ){
+            if (doc.data().gmail === req.query.gmail) {
+                let returnDoc = doc.data()
+                returnDoc.firstName = req.query.newFirstName
                 db.collection("Users").doc(doc.id).update({
-				firstName : req.query.newFirstName				
-				})
+                    firstName: req.query.newFirstName,
+                    firstNameLower: req.query.newFirstName.toLowerCase()
+                }).then(() => {
+                    return res.status(200).send(returnDoc);
+                }).catch((err: any) => {
+                    console.error(err);
+                    return res.status(404).send({ error: 'unable to store', err });
+                });
             }
-        }).then ( (doc: any) => {
-                    return res.status(200).send(doc);
-        }).catch((err: any) => {
-        console.error(err);
-        return res.status(404).send({ error: 'unable to store', err });
-      });       
+        })
     });
 })
 
-//Get avec arguments gmail(pour d�signer l'utilisateur) et newLastName
+/*  
+    Requête Get 
+    arguments http :
+        gmail : adresse gmail de l'utilisateur 
+        newLastName : nouveau nom
+*/
 exports.updateUserLastName = functions.https.onRequest(async (req, res) => {
     res.set('Access-Control-Allow-Origin', '*');
-    db.collection("Users").get().then(function(querySnapshot: any) {
-        querySnapshot.forEach(function(doc: any) {
-            // doc.data() is never undefined for query doc snapshots
+    db.collection("Users").get().then(function (querySnapshot: any) {
+        querySnapshot.forEach(function (doc: any) {
+            
             console.log(doc.id, " => ", doc.data());
-            if (doc.data().gmail === req.query.gmail ){
+            if (doc.data().gmail === req.query.gmail) {
+                let returnDoc = doc.data()
+                returnDoc.lastName = req.query.newLastName
                 db.collection("Users").doc(doc.id).update({
-				lastName: req.query.newLastName				
-				})
+                    lastName: req.query.newLastName,
+                    lastNameLower: req.query.newLastName.toLowerCase()
+                }).then(() => {
+                    return res.status(200).send(returnDoc);
+                }).catch((err: any) => {
+                    console.error(err);
+                    return res.status(404).send({ error: 'unable to store', err });
+                });
             }
-        }).then ( (doc: any) => {
-                    return res.status(200).send(doc);
-        }).catch((err: any) => {
-        console.error(err);
-        return res.status(404).send({ error: 'unable to store', err });
-      });       
+        })
     });
 })
 
-//Get avec arguments gmail(pour d�signer l'utilisateur) et newUserName
+/*  
+    Requête Get 
+    arguments http :
+        gmail : adresse gmail de l'utilisateur 
+        newUserName : nouveau nom d'utilisateur
+*/
 exports.updateUserUserName = functions.https.onRequest(async (req, res) => {
     res.set('Access-Control-Allow-Origin', '*');
-    db.collection("Users").get().then(function(querySnapshot: any) {
-        querySnapshot.forEach(function(doc: any) {
-            // doc.data() is never undefined for query doc snapshots
+    db.collection("Users").get().then(function (querySnapshot: any) {
+        querySnapshot.forEach(function (doc: any) {
+            
             console.log(doc.id, " => ", doc.data());
-            if (doc.data().gmail === req.query.gmail ){
+            if (doc.data().gmail === req.query.gmail) {
+                let returnDoc = doc.data()
+                returnDoc.username = req.query.newUserName
                 db.collection("Users").doc(doc.id).update({
-				userName : req.query.newUserName			
-				})
+                    username: req.query.newUserName
+                }).then(() => {
+                    return res.status(200).send(returnDoc);
+                }).catch((err: any) => {
+                    console.error(err);
+                    return res.status(404).send({ error: 'unable to store', err });
+                });
             }
-        }).then ( (doc: any) => {
-                    return res.status(200).send(doc);
-        }).catch((err: any) => {
-        console.error(err);
-        return res.status(404).send({ error: 'unable to store', err });
-      });       
+        })
     });
 })
 
 
-//Get avec arguments gmail(pour d�signer l'utilisateur) et newAccessToken
+/*  
+    Requête Get 
+    arguments http :
+        gmail : adresse gmail de l'utilisateur 
+        newAccessToken : nouveau token
+*/
 exports.updateUserAccessToken = functions.https.onRequest(async (req, res) => {
     res.set('Access-Control-Allow-Origin', '*');
-    db.collection("Users").get().then(function(querySnapshot: any) {
-        querySnapshot.forEach(function(doc: any) {
+    db.collection("Users").get().then(async function (querySnapshot: any) {
+        querySnapshot.forEach(function (doc: any) {
             // doc.data() is never undefined for query doc snapshots
             console.log(doc.id, " => ", doc.data());
-            if (doc.data().gmail === req.query.gmail ){
+            if (doc.data().gmail === req.query.gmail) {
+                let returnDoc = doc.data()
+                returnDoc.access_token = req.query.newAccessToken
                 db.collection("Users").doc(doc.id).update({
-				access_token : req.query.new_access_token		
-				})
+                    access_token: req.query.newAccessToken                    
+                }).then(() => {
+                    return res.status(200).send(returnDoc);
+                }).catch((err: any) => {
+                    console.error(err);
+                    return res.status(404).send({ error: 'unable to store', err });
+                });
             }
-        }).then ( (doc: any) => {
-                    return res.status(200).send(doc);
-        }).catch((err: any) => {
-        console.error(err);
-        return res.status(404).send({ error: 'unable to store', err });
-      });       
-    });
+        })
+    })
 })
+
+
+
+
+/*  
+    Requête Get 
+    arguments http :
+        gmail : adresse gmail de l'utilisateur 
+        activityType : type d'activité présent dans la collection "activitiesExeperience"
+        startTime : début de l'activité ( en millisecondes, résultat de Date.now() en JS ), sert à identifier l'activité googleFit
+        endtime : fin de l'activité, idem
+*/
+exports.createRecordedActivity = functions.https.onRequest(async (req, res) => {
+    res.set('Access-Control-Allow-Origin', '*');
+    const activityDoc = {
+        gmail: req.query.gmail,
+        activityType: req.query.activityType,
+        startTime: req.query.startTime,
+        endTime: req.query.endTime
+    }
+    db.collection('RecordedActivities')
+        .add(activityDoc)
+        .then((doc: any) => {
+            res.status(200).send(activityDoc);
+        }).catch((err: any) => {
+            console.error(err);
+            return res.status(404).send({ error: 'unable to store', err });
+        });
+});
+
+/*  
+    Requête Get 
+    arguments http :
+        gmail : adresse gmail de l'utilisateur 
+        friend : adresse gmail de l'utilisateur à ajouter en ami
+*/
+exports.addFriend = functions.https.onRequest(async (req, res) => {
+    res.set('Access-Control-Allow-Origin', '*');
+    db.collection("Users").get().then(async function (querySnapshot: any) {
+        querySnapshot.forEach(function (doc: any) {
+            
+            console.log(doc.id, " => ", doc.data());
+            if (doc.data().gmail === req.query.gmail) {
+                const newFriend: string = req.query.friend
+                let returnDoc = doc.data()               
+                returnDoc.friends.push(newFriend)
+                db.collection("Users").doc(doc.id).update({
+                    friends: Firestore.FieldValue.arrayUnion(req.query.friend)
+                }).then(() => {
+                    return res.status(200).send(returnDoc);
+                }).catch((err: any) => {
+                    console.error(err);
+                    return res.status(404).send({ error: 'unable to store', err });
+                });
+            }
+
+        })
+    })
+});
+
+/*  
+    Requête Get 
+    arguments http :
+        gmail : adresse gmail de l'utilisateur 
+        friend : adresse gmail de l'utilisateur à supprimer de la liste d'amis
+*/
+exports.deleteFriend = functions.https.onRequest(async (req, res) => {
+    res.set('Access-Control-Allow-Origin', '*');
+    db.collection("Users").get().then(async function (querySnapshot: any) {
+        querySnapshot.forEach(function (doc: any) {
+            
+            console.log(doc.id, " => ", doc.data());
+            if (doc.data().gmail === req.query.gmail) {
+                const removeFriend = req.query.friend
+                let returnDoc = doc.data()               
+                const key = returnDoc.friends.indexOf(removeFriend)               
+                returnDoc.friends.splice(key,key)               
+                db.collection("Users").doc(doc.id).update({
+                    friends: Firestore.FieldValue.arrayRemove(req.query.friend)
+                }).then(() => {
+                    return res.status(200).send(returnDoc);
+                }).catch((err: any) => {
+                    console.error(err);
+                    return res.status(404).send({ error: 'unable to store', err });
+                });
+            }
+
+        })
+    })
+});
+
+/*  
+    Requête Get 
+    arguments http :
+        gmail : adresse gmail de l'utilisateur dont on veut récupérer les informations
+*/
+exports.getUserInformation = functions.https.onRequest(async (req, res) => {
+    res.set('Access-Control-Allow-Origin', '*');
+    db.collection("Users").get().then(async function (querySnapshot: any) {
+        querySnapshot.forEach(function (doc: any) {
+            // doc.data() is never undefined for query doc snapshots
+            console.log(doc.id, " => ", doc.data());
+            if (doc.data().gmail === req.query.gmail) {
+                res.status(200).send(doc.data());
+            }
+            return res
+        })
+    })
+});
+
+
+/*  
+    Fonction qui ajoute l'xp au bon utilisateur quand une activité est créée, puis vérifie si l'utilisateur a gagné un niveau
+*/
+exports.onRecordedActivityCreate = functions.firestore
+    .document('RecordedActivities/{activityId}')
+    .onCreate(async (snap: any, context: any) => {
+        // Get an object representing the document
+        // e.g. {'name': 'Marie', 'age': 66}
+
+        const value = snap.data()
+        const activity: string = value.activityType;
+        const userMail = value.gmail;
+
+        const xp = await getXpFromActivity(activity)
+        console.log('result from getxpactivity : ' + xp);
+
+        const achievement: boolean = await checkAchievementPushupsWeek(userMail);
+        console.log("achievement" + achievement)
+
+        db.collection("Users").get().then(function (querySnapshot: any) {
+            querySnapshot.forEach(function (doc: any) {
+                // doc.data() is never undefined for query doc snapshots
+                console.log(doc.id, " => ", doc.data());
+                if (doc.data().gmail === userMail) {
+                    const newExperience: number = doc.data().totalExperience + xp;
+                    console.log('total exp ' + doc.data().totalExperience);
+                    db.collection("Users").doc(doc.id).update({       // attribue l'expérience
+                        totalExperience: newExperience
+                    }).then(() => {
+                        const currentLevel = doc.data().level
+                        db.collection("Levels").get().then((querySnapshotLevels: any) => {
+                            if (querySnapshotLevels.docs[0].data().levels[currentLevel] <= newExperience) {    // vérifie si un palier d'xp a été franchi 
+                                const newLevel = doc.data().level + 1
+                                db.collection("Users").doc(doc.id).update({
+                                    level: newLevel
+                                })
+                            }
+                        })
+
+                    })
+                }
+            });
+        });
+    });
+
+
+
+/* 
+    Fonction qui renvoie la quantité d'expérience que donne une certaine activité 
+*/
+async function getXpFromActivity(activityType: string): Promise<number> {
+    let xpReturn: number = 0;
+    const myPromise = await db.collection("ActivitiesExperience").get().then((querySnapshot: any) => {
+        
+        querySnapshot.forEach(function (doc: any) {
+            if (doc.data().activity === activityType) {
+                xpReturn = doc.data().xp;
+            }
+        });
+
+
+        return (xpReturn)
+    })
+
+    return myPromise
+}
+
+
+/* 
+    Fonction qui vérifie si le succès 3 pushups en une semaine a été réalisé
+*/
+async function checkAchievementPushupsWeek(gmail: string): Promise<boolean> {
+
+    const currentDate: number = Date.now();
+
+    const myPromise = await db.collection("RecordedActivities").get().then((querySnapshot: any) => {
+        let isAchievement: boolean = false;
+        let activitiesThisWeek: number = 0;
+        querySnapshot.forEach(function (doc: any) {
+            // doc.data() is never undefined for query doc snapshots
+
+            if (doc.data().activityType === "pushups") {
+
+                if ((currentDate - doc.data().startTime) < 1000 * 60 * 60 * 24 * 7) {
+                    activitiesThisWeek = activitiesThisWeek + 1
+                }
+            }
+
+            if (activitiesThisWeek >= 3) {
+                isAchievement = true
+            }
+
+            
+            return (isAchievement)
+        })
+        return(isAchievement)
+    })
+    
+    return myPromise
+}
+
