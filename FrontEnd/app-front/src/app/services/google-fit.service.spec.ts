@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 
-import { AuthService } from './auth.service';
+import { GoogleFitService } from './google-fit.service';
 
-describe('AuthService', () => {
+describe('GoogleFitService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
 
   it('should be created', () => {
-    const service: AuthService = TestBed.get(AuthService);
+    const service: GoogleFitService = TestBed.get(GoogleFitService);
     expect(service).toBeTruthy();
   });
 });

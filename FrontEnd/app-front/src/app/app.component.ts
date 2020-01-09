@@ -20,6 +20,11 @@ export class AppComponent {
       icon: 'home'
     },
     {
+      title: 'Mes activités',
+      url: '/my-activities',
+      icon: 'settings'
+    },
+    {
       title: 'Assistant',
       url: '/chat',
       icon: 'chatboxes'
@@ -28,7 +33,7 @@ export class AppComponent {
       title: 'Paramètres',
       url: '/settings',
       icon: 'settings'
-    }
+    },
   ];
 
   constructor(

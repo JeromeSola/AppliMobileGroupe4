@@ -14,6 +14,6 @@ export class UserCloudFuncService {
   }
 
   public UpdateUserAccessToken(gmail: string,access_token: string):Observable<any>{
-    return this.http.get(`https://us-central1-coachman-2aaa8.cloudfunctions.net/updateUserAccessToken?gmail=${gmail}&new_access_token=${access_token}` )
+    return this.http.get(`https://us-central1-coachman-2aaa8.cloudfunctions.net/updateUserAccessToken?gmail=${gmail}&newAccessToken=${access_token}` )
   }
 }
