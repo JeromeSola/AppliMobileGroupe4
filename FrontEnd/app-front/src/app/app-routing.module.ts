@@ -28,7 +28,7 @@ const routes: Routes = [
     loadChildren: () => import('./loading/loading.module').then( m => m.LoadingPageModule)
   },
   {
-    path: 'user-search',
+    path: 'user-search/:previousProfile/:query',
     loadChildren: () => import('./user-search/user-search.module').then( m => m.UserSearchPageModule)
   },
   {
