@@ -2,6 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { Platform, IonContent } from '@ionic/angular';
 import { ApiAiClient } from 'api-ai-javascript/es6/ApiAiClient'
 import { FormControl, FormBuilder } from '@angular/forms';
+import { Router } from '@angular/router';
 
 interface Message {
   from: 'bot' | 'user';
@@ -36,7 +37,7 @@ export class DialogflowPage{
   chatBox: any;
   isLoading: boolean;
 
-  constructor(public platform: Platform, public formBuilder: FormBuilder) {
+  constructor(public platform: Platform, public formBuilder: FormBuilder, private router: Router) {
     this.chatBox = '';
 
     this.messageForm = formBuilder.group({
@@ -78,11 +79,13 @@ export class DialogflowPage{
 
           if (response.result.metadata.intentName == "Progression"){
             console.log("FONCTION PROGRESSION");
+            this.router.navigate(['/progression']);
             // Routing vers la page Progression.
           }
 
           if (response.result.metadata.intentName == "Gamification"){
             console.log("FONCTION GAMIFICATION");
+            this.router.navigate(['/gamification']);
             // Routing vers la page Gamification.
           }
 
