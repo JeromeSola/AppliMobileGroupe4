@@ -24,17 +24,14 @@ const routes: Routes = [
     loadChildren: () => import('./profile/profile.module').then( m => m.ProfilePageModule)
   },
   {
-    path: 'dialogflow',
-    loadChildren: () => import('./dialogflow/dialogflow.module').then( m => m.DialogflowPageModule)
-  },
-  {
     path: 'loading',
     loadChildren: () => import('./loading/loading.module').then( m => m.LoadingPageModule)
   },
   {
     path: 'user-search',
     loadChildren: () => import('./user-search/user-search.module').then( m => m.UserSearchPageModule)
-  },  {
+  },
+  {
     path: 'edit-profile',
     loadChildren: () => import('./edit-profile/edit-profile.module').then( m => m.EditProfilePageModule)
   }
