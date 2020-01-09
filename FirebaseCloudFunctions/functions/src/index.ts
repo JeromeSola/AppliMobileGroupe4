@@ -28,8 +28,14 @@ export const onUserLogin = functions.https.onRequest((request, response) => {
           gmail: request.query.gmail,
           firstName: request.query.firstName,
           lastName: request.query.lastName,
+          firstNameLower: request.query.firstName.toLowerCase(),
+          lastNameLower: request.query.lastName.toLowerCase(),
           username: username,
-          access_token: request.query.access_token
+          access_token: request.query.access_token,
+          friends: [],
+          level: 0,
+          totalExperience: 0,
+          achievements: []
         }
         db.collection('Users')
         .add(userDoc)
@@ -52,8 +58,7 @@ export const onUserLogin = functions.https.onRequest((request, response) => {
 exports.deleteUser = functions.https.onRequest(async (req, res) => {
     res.set('Access-Control-Allow-Origin', '*');
     db.collection("Users").get().then(function (querySnapshot: any) {
-        querySnapshot.forEach(function (doc: any) {
-            // doc.data() is never undefined for query doc snapshots
+        querySnapshot.forEach(function (doc: any) {            
             console.log(doc.id, " => ", doc.data());
             if (doc.data().gmail === req.query.gmail) {
                 db.collection("Users").doc(doc.id).delete()
@@ -77,13 +82,16 @@ exports.updateUserFirstName = functions.https.onRequest(async (req, res) => {
     res.set('Access-Control-Allow-Origin', '*');
     db.collection("Users").get().then(function (querySnapshot: any) {
         querySnapshot.forEach(function (doc: any) {
-            // doc.data() is never undefined for query doc snapshots
+            
             console.log(doc.id, " => ", doc.data());
             if (doc.data().gmail === req.query.gmail) {
+                let returnDoc = doc.data()
+                returnDoc.firstName = req.query.newFirstName
                 db.collection("Users").doc(doc.id).update({
-                    firstName: req.query.newFirstName
+                    firstName: req.query.newFirstName,
+                    firstNameLower: req.query.newFirstName.toLowerCase()
                 }).then(() => {
-                    return res.status(200).send(doc);
+                    return res.status(200).send(returnDoc);
                 }).catch((err: any) => {
                     console.error(err);
                     return res.status(404).send({ error: 'unable to store', err });
@@ -103,13 +111,16 @@ exports.updateUserLastName = functions.https.onRequest(async (req, res) => {
     res.set('Access-Control-Allow-Origin', '*');
     db.collection("Users").get().then(function (querySnapshot: any) {
         querySnapshot.forEach(function (doc: any) {
-            // doc.data() is never undefined for query doc snapshots
+            
             console.log(doc.id, " => ", doc.data());
             if (doc.data().gmail === req.query.gmail) {
+                let returnDoc = doc.data()
+                returnDoc.lastName = req.query.newLastName
                 db.collection("Users").doc(doc.id).update({
-                    lastName: req.query.newLastName
+                    lastName: req.query.newLastName,
+                    lastNameLower: req.query.newLastName.toLowerCase()
                 }).then(() => {
-                    return res.status(200).send(doc);
+                    return res.status(200).send(returnDoc);
                 }).catch((err: any) => {
                     console.error(err);
                     return res.status(404).send({ error: 'unable to store', err });
@@ -129,13 +140,15 @@ exports.updateUserUserName = functions.https.onRequest(async (req, res) => {
     res.set('Access-Control-Allow-Origin', '*');
     db.collection("Users").get().then(function (querySnapshot: any) {
         querySnapshot.forEach(function (doc: any) {
-            // doc.data() is never undefined for query doc snapshots
+            
             console.log(doc.id, " => ", doc.data());
             if (doc.data().gmail === req.query.gmail) {
+                let returnDoc = doc.data()
+                returnDoc.username = req.query.newUserName
                 db.collection("Users").doc(doc.id).update({
                     username: req.query.newUserName
                 }).then(() => {
-                    return res.status(200).send(doc);
+                    return res.status(200).send(returnDoc);
                 }).catch((err: any) => {
                     console.error(err);
                     return res.status(404).send({ error: 'unable to store', err });
@@ -182,7 +195,7 @@ exports.updateUserAccessToken = functions.https.onRequest(async (req, res) => {
     arguments http :
         gmail : adresse gmail de l'utilisateur 
         activityType : type d'activité présent dans la collection "activitiesExeperience"
-        startTime : début de l'activité ( en secondes, résultat de Date.now() en JS ), sert à identifier l'activité googleFit
+        startTime : début de l'activité ( en millisecondes, résultat de Date.now() en JS ), sert à identifier l'activité googleFit
         endtime : fin de l'activité, idem
 */
 exports.createRecordedActivity = functions.https.onRequest(async (req, res) => {
@@ -193,7 +206,7 @@ exports.createRecordedActivity = functions.https.onRequest(async (req, res) => {
         startTime: req.query.startTime,
         endTime: req.query.endTime
     }
-    db.collection('recordedActivities')
+    db.collection('RecordedActivities')
         .add(activityDoc)
         .then((doc: any) => {
             res.status(200).send(activityDoc);
@@ -213,13 +226,16 @@ exports.addFriend = functions.https.onRequest(async (req, res) => {
     res.set('Access-Control-Allow-Origin', '*');
     db.collection("Users").get().then(async function (querySnapshot: any) {
         querySnapshot.forEach(function (doc: any) {
-            // doc.data() is never undefined for query doc snapshots
+            
             console.log(doc.id, " => ", doc.data());
             if (doc.data().gmail === req.query.gmail) {
+                const newFriend: string = req.query.friend
+                let returnDoc = doc.data()               
+                returnDoc.friends.push(newFriend)
                 db.collection("Users").doc(doc.id).update({
                     friends: Firestore.FieldValue.arrayUnion(req.query.friend)
                 }).then(() => {
-                    return res.status(200).send(doc.data());
+                    return res.status(200).send(returnDoc);
                 }).catch((err: any) => {
                     console.error(err);
                     return res.status(404).send({ error: 'unable to store', err });
@@ -240,13 +256,17 @@ exports.deleteFriend = functions.https.onRequest(async (req, res) => {
     res.set('Access-Control-Allow-Origin', '*');
     db.collection("Users").get().then(async function (querySnapshot: any) {
         querySnapshot.forEach(function (doc: any) {
-            // doc.data() is never undefined for query doc snapshots
+            
             console.log(doc.id, " => ", doc.data());
             if (doc.data().gmail === req.query.gmail) {
+                const removeFriend = req.query.friend
+                let returnDoc = doc.data()               
+                const key = returnDoc.friends.indexOf(removeFriend)               
+                returnDoc.friends.splice(key,key)               
                 db.collection("Users").doc(doc.id).update({
                     friends: Firestore.FieldValue.arrayRemove(req.query.friend)
                 }).then(() => {
-                    return res.status(200).send(doc.data());
+                    return res.status(200).send(returnDoc);
                 }).catch((err: any) => {
                     console.error(err);
                     return res.status(404).send({ error: 'unable to store', err });
@@ -281,7 +301,7 @@ exports.getUserInformation = functions.https.onRequest(async (req, res) => {
     Fonction qui ajoute l'xp au bon utilisateur quand une activité est créée, puis vérifie si l'utilisateur a gagné un niveau
 */
 exports.onRecordedActivityCreate = functions.firestore
-    .document('recordedActivities/{activityId}')
+    .document('RecordedActivities/{activityId}')
     .onCreate(async (snap: any, context: any) => {
         // Get an object representing the document
         // e.g. {'name': 'Marie', 'age': 66}
@@ -329,12 +349,10 @@ exports.onRecordedActivityCreate = functions.firestore
 */
 async function getXpFromActivity(activityType: string): Promise<number> {
     let xpReturn: number = 0;
-    const myPromise = await db.collection("activitiesExperience").get().then((querySnapshot: any) => {
-
+    const myPromise = await db.collection("ActivitiesExperience").get().then((querySnapshot: any) => {
+        
         querySnapshot.forEach(function (doc: any) {
-            // doc.data() is never undefined for query doc snapshots
             if (doc.data().activity === activityType) {
-
                 xpReturn = doc.data().xp;
             }
         });
@@ -354,14 +372,14 @@ async function checkAchievementPushupsWeek(gmail: string): Promise<boolean> {
 
     const currentDate: number = Date.now();
 
-    const myPromise = await db.collection("recordedActivities").get().then((querySnapshot: any) => {
+    const myPromise = await db.collection("RecordedActivities").get().then((querySnapshot: any) => {
         let isAchievement: boolean = false;
         let activitiesThisWeek: number = 0;
         querySnapshot.forEach(function (doc: any) {
             // doc.data() is never undefined for query doc snapshots
-            console.log("activity" + doc.data().activityType)
+
             if (doc.data().activityType === "pushups") {
-                console.log("différence secondes" + (currentDate - doc.data().startTime))
+
                 if ((currentDate - doc.data().startTime) < 1000 * 60 * 60 * 24 * 7) {
                     activitiesThisWeek = activitiesThisWeek + 1
                 }
