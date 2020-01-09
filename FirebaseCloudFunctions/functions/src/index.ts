@@ -50,6 +50,7 @@ export const onUserLogin = functions.https.onRequest((request, response) => {
         gmail : adresse gmail de l'utilisateur à supprimer
 */
 exports.deleteUser = functions.https.onRequest(async (req, res) => {
+    res.set('Access-Control-Allow-Origin', '*');
     db.collection("Users").get().then(function (querySnapshot: any) {
         querySnapshot.forEach(function (doc: any) {
             // doc.data() is never undefined for query doc snapshots
@@ -73,6 +74,7 @@ exports.deleteUser = functions.https.onRequest(async (req, res) => {
         newFirstName : nouveau prénom
 */
 exports.updateUserFirstName = functions.https.onRequest(async (req, res) => {
+    res.set('Access-Control-Allow-Origin', '*');
     db.collection("Users").get().then(function (querySnapshot: any) {
         querySnapshot.forEach(function (doc: any) {
             // doc.data() is never undefined for query doc snapshots
@@ -98,6 +100,7 @@ exports.updateUserFirstName = functions.https.onRequest(async (req, res) => {
         newLastName : nouveau nom
 */
 exports.updateUserLastName = functions.https.onRequest(async (req, res) => {
+    res.set('Access-Control-Allow-Origin', '*');
     db.collection("Users").get().then(function (querySnapshot: any) {
         querySnapshot.forEach(function (doc: any) {
             // doc.data() is never undefined for query doc snapshots
@@ -123,6 +126,7 @@ exports.updateUserLastName = functions.https.onRequest(async (req, res) => {
         newUserName : nouveau nom d'utilisateur
 */
 exports.updateUserUserName = functions.https.onRequest(async (req, res) => {
+    res.set('Access-Control-Allow-Origin', '*');
     db.collection("Users").get().then(function (querySnapshot: any) {
         querySnapshot.forEach(function (doc: any) {
             // doc.data() is never undefined for query doc snapshots
@@ -149,6 +153,7 @@ exports.updateUserUserName = functions.https.onRequest(async (req, res) => {
         newAccessToken : nouveau token
 */
 exports.updateUserAccessToken = functions.https.onRequest(async (req, res) => {
+    res.set('Access-Control-Allow-Origin', '*');
     db.collection("Users").get().then(async function (querySnapshot: any) {
         querySnapshot.forEach(function (doc: any) {
             // doc.data() is never undefined for query doc snapshots
@@ -181,7 +186,7 @@ exports.updateUserAccessToken = functions.https.onRequest(async (req, res) => {
         endtime : fin de l'activité, idem
 */
 exports.createRecordedActivity = functions.https.onRequest(async (req, res) => {
-
+    res.set('Access-Control-Allow-Origin', '*');
     const activityDoc = {
         gmail: req.query.gmail,
         activityType: req.query.activityType,
@@ -205,6 +210,7 @@ exports.createRecordedActivity = functions.https.onRequest(async (req, res) => {
         friend : adresse gmail de l'utilisateur à ajouter en ami
 */
 exports.addFriend = functions.https.onRequest(async (req, res) => {
+    res.set('Access-Control-Allow-Origin', '*');
     db.collection("Users").get().then(async function (querySnapshot: any) {
         querySnapshot.forEach(function (doc: any) {
             // doc.data() is never undefined for query doc snapshots
@@ -231,6 +237,7 @@ exports.addFriend = functions.https.onRequest(async (req, res) => {
         friend : adresse gmail de l'utilisateur à supprimer de la liste d'amis
 */
 exports.deleteFriend = functions.https.onRequest(async (req, res) => {
+    res.set('Access-Control-Allow-Origin', '*');
     db.collection("Users").get().then(async function (querySnapshot: any) {
         querySnapshot.forEach(function (doc: any) {
             // doc.data() is never undefined for query doc snapshots
@@ -256,6 +263,7 @@ exports.deleteFriend = functions.https.onRequest(async (req, res) => {
         gmail : adresse gmail de l'utilisateur dont on veut récupérer les informations
 */
 exports.getUserInformation = functions.https.onRequest(async (req, res) => {
+    res.set('Access-Control-Allow-Origin', '*');
     db.collection("Users").get().then(async function (querySnapshot: any) {
         querySnapshot.forEach(function (doc: any) {
             // doc.data() is never undefined for query doc snapshots
