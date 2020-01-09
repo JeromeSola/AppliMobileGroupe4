@@ -17,7 +17,7 @@
         <ion-list>
           <div *ngIf="loginService.isLoggedIn()">
             <ion-menu-toggle auto-hide="false">
-              <ion-item [routerDirection]="'root'" [routerLink]="['/profile', this.loginService.loggedUser]">
+              <ion-item [routerDirection]="'root'" [routerLink]="['/profile', this.loginService.loggedUser.username]">
                 <ion-avatar slot="start"><img src="../../assets/img/default-avatar.png"></ion-avatar>
                 <ion-label>
                   {{ this.loginService.loggedUser.firstName }} {{ this.loginService.loggedUser.lastName }}
