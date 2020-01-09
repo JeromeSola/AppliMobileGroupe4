@@ -12,7 +12,7 @@
   </ion-toolbar>
   <ion-item>
     <ion-input [(ngModel)]="userInput" placeholder='Rechercher un utilisateur'></ion-input>
-    <ion-button disabled="{{!userInput}}" (click)="onClickSearch()" (keyup.enter)="onClickSearch()" slot="end" fill="clear">
+    <ion-button disabled="{{!userInput}}" (click)="onClickSearch()" slot="end" fill="clear">
         <ion-icon name="search"></ion-icon>
     </ion-button>
   </ion-item>
@@ -40,6 +40,115 @@
           Unknown user : {{ username }}
         </div>
       </div>
-      <!--Reste du body ici-->
+      <ion-row class="tab-row">
+        <ion-col [ngClass]="(currentTab == 0) ? 'center-content selected-tab' : 'center-content unselected-tab'" (click)="onClickTab(0)">
+          <ion-text>Planning</ion-text>
+        </ion-col>
+        <ion-col [ngClass]="(currentTab == 1) ? 'center-content selected-tab' : 'center-content unselected-tab'" (click)="onClickTab(1)">
+          <ion-text>Activité</ion-text>
+        </ion-col>
+        <ion-col [ngClass]="(currentTab == 2) ? 'center-content selected-tab' : 'center-content unselected-tab'" (click)="onClickTab(2)">
+          <ion-text>Score</ion-text>
+        </ion-col>
+      </ion-row>
+      <ion-slides class="slides" #slides (ionSlideDidChange)="slideChanged()" [options]="slideOpts">
+        <ion-slide>
+          <div class="slide-content">
+            <!--
+              JEROOOOOOME C ICI POUR LE CODE DU SLIDE DU PLANNING
+            -->
+            <div class="ion-padding">Cet utilisateur n'a publié aucun planning.</div>
+          </div>
+        </ion-slide>
+        <ion-slide>
+          <div class="slide-content">
+            <div class="ion-padding">Cet utilisateur n'a publié aucune activité.</div>
+          </div>
+        </ion-slide>
+        <ion-slide>
+          <div class="slide-content">
+            <ion-grid>
+              <ion-row>
+                <ion-col class="level-display" size=3>
+                  Niveau 10
+                </ion-col>
+                <ion-col class="progress-col">
+                  <div class="progress-container">
+                    <div class="progress-fill"></div>
+                    <div class="progress-bar"></div>
+                  </div>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+            <ion-list>
+
+              <ion-item>
+                <ion-icon name="star" slot="start" class="icon-success-done"></ion-icon>
+                <ion-label>Succès numéro 1</ion-label>
+                <ion-button slot="end" fill="clear" class="grey-button">
+                  <ion-icon name="help"></ion-icon>
+                </ion-button>
+              </ion-item>
+
+              <ion-item>
+                <ion-icon name="star" slot="start" class="icon-success-done"></ion-icon>
+                <ion-label>Succès numéro 2</ion-label>
+                <ion-button slot="end" fill="clear" class="grey-button">
+                  <ion-icon name="help"></ion-icon>
+                </ion-button>
+                </ion-item>
+              </ion-list>
+
+              <ion-item>
+                <ion-icon name="star" slot="start" class="icon-success-done"></ion-icon>
+                <ion-label>Succès numéro 3</ion-label>
+                <ion-button slot="end" fill="clear" class="grey-button">
+                  <ion-icon name="help"></ion-icon>
+                </ion-button>
+              </ion-item>
+
+              <ion-item>
+                <ion-icon name="star-outline" slot="start" class="icon-success-not-done"></ion-icon>
+                <ion-label>Succès numéro 4</ion-label>
+                <ion-button slot="end" fill="clear" class="grey-button">
+                  <ion-icon name="help"></ion-icon>
+                </ion-button>
+              </ion-item>
+
+              <ion-item>
+                <ion-icon name="star-outline" slot="start" class="icon-success-not-done"></ion-icon>
+                <ion-label>Succès numéro 5</ion-label>
+                <ion-button slot="end" fill="clear" class="grey-button">
+                  <ion-icon name="help"></ion-icon>
+                </ion-button>
+              </ion-item>
+
+              <ion-item>
+                <ion-icon name="star-outline" slot="start" class="icon-success-not-done"></ion-icon>
+                <ion-label>Succès numéro 6</ion-label>
+                <ion-button slot="end" fill="clear" class="grey-button">
+                  <ion-icon name="help"></ion-icon>
+                </ion-button>
+              </ion-item>
+
+              <ion-item>
+                <ion-icon name="star-outline" slot="start" class="icon-success-not-done"></ion-icon>
+                <ion-label>Succès numéro 7</ion-label>
+                <ion-button slot="end" fill="clear" class="grey-button">
+                  <ion-icon name="help"></ion-icon>
+                </ion-button>
+              </ion-item>
+
+              <ion-item>
+                <ion-icon name="star-outline" slot="start" class="icon-success-not-done"></ion-icon>
+                <ion-label>Succès numéro 8</ion-label>
+                <ion-button slot="end" fill="clear" class="grey-button">
+                  <ion-icon name="help"></ion-icon>
+                </ion-button>
+              </ion-item>
+
+          </div>
+        </ion-slide>
+      </ion-slides>
     </div>
 </ion-content>
