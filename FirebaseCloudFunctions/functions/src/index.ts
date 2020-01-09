@@ -154,17 +154,17 @@ exports.updateUserAccessToken = functions.https.onRequest(async (req, res) => {
             // doc.data() is never undefined for query doc snapshots
             console.log(doc.id, " => ", doc.data());
             if (doc.data().gmail === req.query.gmail) {
+                let returnDoc = doc.data()
+                returnDoc.access_token = req.query.newAccessToken
                 db.collection("Users").doc(doc.id).update({
-                    access_token: req.query.newAccessToken
-
+                    access_token: req.query.newAccessToken                    
                 }).then(() => {
-                    return res.status(200).send(doc.data());
+                    return res.status(200).send(returnDoc);
                 }).catch((err: any) => {
                     console.error(err);
                     return res.status(404).send({ error: 'unable to store', err });
                 });
             }
-
         })
     })
 })
