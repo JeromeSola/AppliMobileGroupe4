@@ -7,6 +7,7 @@ import { ApiAiClient } from 'api-ai-javascript/es6/ApiAiClient'
 import { Message } from './message';
 import { accessToken } from '../../../../../APIKeys/dialogflow';
 import { TextToSpeech } from '@ionic-native/text-to-speech/ngx';
+import { Router } from '@angular/router';
 
 import { FormControl} from '@angular/forms';
 
@@ -29,13 +30,13 @@ export class ChatPage implements OnInit, AfterViewInit {
   isLoading: boolean;
   client;
   
-  constructor(private mediaCapture: MediaCapture,private tts: TextToSpeech,public platform: Platform,private loginService: LoginService,) { }
+  constructor(private mediaCapture: MediaCapture,private tts: TextToSpeech,public platform: Platform,private loginService: LoginService,private router: Router) { }
 
   ngOnInit() {
     this.messageList = Message.getMockList();
     this.client = new ApiAiClient({accessToken: accessToken});
     console.log(this.loginService.loggedUser.access_token);
-    this.access_token_user=this.loginService.loggedUser.access_token
+    this.access_token_user=this.loginService.loggedUser.access_token;
   }
 
   ngAfterViewInit() {
@@ -91,20 +92,29 @@ export class ChatPage implements OnInit, AfterViewInit {
 
           if (response.result.metadata.intentName == "Progression"){
             console.log("FONCTION PROGRESSION");
-            //this.router.navigate(['/progression']);
+            let username=this.loginService.loggedUser.username;
+            this.router.navigate([`/profile/${username}`]);
             // Routing vers la page Progression.
           }
 
           if (response.result.metadata.intentName == "Gamification"){
             console.log("FONCTION GAMIFICATION");
-            //this.router.navigate(['/gamification']);
+            let username=this.loginService.loggedUser.username;
+            this.router.navigate([`/profile/${username}`]);
             // Routing vers la page Gamification.
           }
 
           if (response.result.metadata.intentName == "Challenge"){
             dialogflow_params = response.result.parameters;
             console.log("FONCTION CHALLENGE");
+            this.router.navigate([`/profile/${dialogflow_params.username}`]);
             // Envoie un challenge à "challenger_id" contenu dans les dialogflow_params.
+          }
+
+          if (response.result.metadata.intentName == "Start"){
+            console.log("FONCTION START");
+            this.router.navigate(['/my-activities/']);
+            // Routing vers la page Gamification.
           }
 
         }
