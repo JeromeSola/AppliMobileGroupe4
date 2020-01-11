@@ -1,5 +1,8 @@
 <ion-header>
   <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
     <ion-title>Mes Activités</ion-title>
   </ion-toolbar>
 </ion-header>
@@ -14,10 +17,10 @@
   <br />
   <br />
   <section>
-      <ion-item>
-          <ion-label>Temps:</ion-label>
-          <ion-note slot="end" color="primary">{{stopWatch}}</ion-note>
-        </ion-item>
+    <ion-item>
+      <ion-label>Temps:</ion-label>
+      <ion-note slot="end" color="primary">{{stopWatch}}</ion-note>
+    </ion-item>
     <ion-item>
       <ion-label>Nombre de pas:</ion-label>
       <ion-note slot="end" color="primary">{{stepsCount}}</ion-note>
@@ -26,7 +29,7 @@
   <br />
   <br />
   <section>
-      <ion-button expand="full" color="secondary" (click)="sendStepstoGgFit()">Send Info to gg Fit</ion-button>
-      <ion-button expand="full" color="secondary" (click)="getStepsInfoFromSession()">Get info from gg Fit</ion-button>
+    <ion-button expand="full" color="secondary" (click)="sendStepstoGgFit()">Send Info to gg Fit</ion-button>
+    <ion-button expand="full" color="secondary" (click)="getStepsInfoFromSession()">Get info from gg Fit</ion-button>
   </section>
 </ion-content>
