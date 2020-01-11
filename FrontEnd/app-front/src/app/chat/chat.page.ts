@@ -1,15 +1,17 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { IonContent,Platform } from '@ionic/angular';
-
+import { googleId } from '../../../../../APIKeys/googleId';
 import { LoginService } from 'src/app/services/login.service';
 import { MediaCapture, MediaFile, CaptureError, CaptureAudioOptions } from '@ionic-native/media-capture/ngx';
-import { ApiAiClient } from 'api-ai-javascript/es6/ApiAiClient'
-import { Message } from './message';
-import { accessToken } from '../../../../../APIKeys/dialogflow';
-import { TextToSpeech } from '@ionic-native/text-to-speech/ngx';
-import { Router } from '@angular/router';
 
+import { MessageService } from '../services/message.service';
+import {Message} from '../services/message'
+import { TextToSpeech } from '@ionic-native/text-to-speech/ngx';
 import { FormControl} from '@angular/forms';
+import { HttpClient } from '@angular/common/http'
+import { timer } from 'rxjs';
+
+import { Router } from '@angular/router';
 
 const SCROLL_ANIMATION_DURATION: number = 500;
 
@@ -21,22 +23,18 @@ const SCROLL_ANIMATION_DURATION: number = 500;
 })
 export class ChatPage implements OnInit, AfterViewInit {
   @ViewChild(IonContent, {static: false}) content: IonContent;
-
   private _isTextModeEnabled: boolean = true;
   private _userInput: string = '';
   private _messageList: Message[] = [];
+  private firstInit:boolean=true;
   private _lastAudio: MediaFile = null; 
   private access_token_user : string;
   isLoading: boolean;
-  client;
   
-  constructor(private mediaCapture: MediaCapture,private tts: TextToSpeech,public platform: Platform,private loginService: LoginService,private router: Router) { }
+  constructor(private message:MessageService,private http: HttpClient,private mediaCapture: MediaCapture,private tts: TextToSpeech,public platform: Platform,private loginService: LoginService,private router: Router) { }
 
   ngOnInit() {
-    this.messageList = Message.getMockList();
-    this.client = new ApiAiClient({accessToken: accessToken});
-    console.log(this.loginService.loggedUser.access_token);
-    this.access_token_user=this.loginService.loggedUser.access_token;
+      this.access_token_user=this.loginService.loggedUser.access_token
   }
 
   ngAfterViewInit() {
@@ -48,7 +46,7 @@ export class ChatPage implements OnInit, AfterViewInit {
       text:message,
       locale: 'fr-FR'
     })
-    .then(() => console.log('Success'))
+    .then(() => {})
     .catch((reason: any) => console.log(reason));
   }
 
@@ -57,7 +55,8 @@ export class ChatPage implements OnInit, AfterViewInit {
   onSendClick(): void {
     if (this.userInput) {
       let sendDate = new Date();
-      this.messageList.push(new Message(this.userInput, true, sendDate));
+      //this.messageList.push(new Message(this.userInput, true, sendDate));
+      this.message.messageList.push(new Message(this.userInput, true, sendDate));
       this.isLoading = true;
       let options = {
         contexts: [{
@@ -68,26 +67,61 @@ export class ChatPage implements OnInit, AfterViewInit {
             }
         }]
       };
-      this.client
+      this.message.client
       .textRequest(this.userInput,options)
       .then(response => {
         
         console.log(response);
-        this.messageList.push(new Message(response.result.fulfillment.speech, false, sendDate))
+
+        //this.messageList.push(new Message(response.result.fulfillment.speech, false, sendDate))
+        this.message.messageList.push(new Message(response.result.fulfillment.speech, false, sendDate))
         this.isLoading = false;
         this.scrollToBottom();
-        this.readAssistantMessage(response.result.fulfillment.speech)
+        let regex:RegExp=/<br>/gi
+        this.readAssistantMessage(response.result.fulfillment.speech.replace(regex,''))
         let dialogflow_params;
         if (response.result.actionIncomplete == false){
 
           if (response.result.metadata.intentName == "Entrainement"){
-            dialogflow_params = response.result.parameters;
+            dialogflow_params = response.result.contexts[0].parameters;
           }
 
           if (response.result.metadata.intentName == "Entrainement - yes"){
-            console.log(dialogflow_params);
-            console.log("FONCTION ENTRAINEMENT CONFIRMER > AJOUTER CALENDAR");
-            // Plannifie l'évènement sur Google Calendar.
+            this.isLoading = true;
+            dialogflow_params = response.result.contexts[0].parameters;
+            const eventAdded = {
+              summary: 'Coach Man '+dialogflow_params.activity.charAt(0).toUpperCase() + dialogflow_params.activity.substring(1).toLowerCase(),
+              location: '1 Avenue du Dr Albert Schweitzer, 33400 Talence',
+              description: 'Seance',
+              start: {
+                dateTime: dialogflow_params.date+'T'+dialogflow_params.time,
+                timeZone: 'Europe/Paris'
+              },
+              end: {
+                dateTime: dialogflow_params.date+'T'+String(parseInt(dialogflow_params.time.substring(0,2))+1)+dialogflow_params.time.substring(2),
+                timeZone: 'Europe/Paris'
+              },
+              attendees: [],
+              reminders: {
+                useDefault: false,
+                overrides: [
+                  { method: 'popup', minutes: 10 }
+                ]
+              }
+             }
+            this.http.post(`https://www.googleapis.com/calendar/v3/calendars/primary/events?alt=json&access_token=${this.access_token_user}&key=AIzaSyAqdQDXdIX8WGmPXEcTLAepq8A5aag-mJI`,eventAdded)
+            .subscribe((data: any) => {
+              console.log(data)
+              //this.messageList.push(new Message('Et voila votre séance est planifié !', false, sendDate))
+              this.message.messageList.push(new Message('Et voila votre séance est planifié !', false, sendDate))
+              this.isLoading = false;
+              this.scrollToBottom();
+              this.readAssistantMessage('Et voila votre séance est planifié !')
+            },error => {
+              console.log(error)
+        
+            });
+            
           }
 
           if (response.result.metadata.intentName == "Progression"){
