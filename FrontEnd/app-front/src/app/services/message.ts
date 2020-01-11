@@ -1,5 +1,5 @@
 export class Message {
-    
+
     constructor(
         private _htmlContent: string,
         private _isFromUser: boolean,
@@ -55,3 +55,4 @@ export class Message {
     }
 
 }
+
