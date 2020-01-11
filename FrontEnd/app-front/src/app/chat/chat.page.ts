@@ -39,7 +39,14 @@ export class ChatPage implements OnInit, AfterViewInit {
   onSendClick(): void {
     if (this.userInput) {
       this.WriteMessage(this.userInput, true);
-      this.message.client.textRequest(this.userInput,{contexts: [{name: "oauth2", lifespan: 1, parameters: {userID: this.access_token_user}}]})
+      const options = {
+        contexts: [{
+          name: "oauth2", 
+          lifespan: 1,
+          parameters: { userID: this.access_token_user }
+        }]
+      };
+      this.message.client.textRequest(this.userInput,options)
       .then(response => {
         this.WriteMessage(response.result.fulfillment.speech, false);
         this.DialogFlowInteraction(response);
