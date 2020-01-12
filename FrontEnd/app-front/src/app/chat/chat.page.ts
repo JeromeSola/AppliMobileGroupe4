@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { IonContent,Platform } from '@ionic/angular';
 
 import { LoginService } from 'src/app/services/login.service';
+import { UserInfo} from '../services/user.service';
 import { MessageService } from '../services/message.service';
 import { Message } from '../services/message'
 
@@ -23,13 +24,19 @@ export class ChatPage implements OnInit, AfterViewInit {
   private _userInput: string = '';
   private _messageList: Message[] = [];
   private _lastAudio: MediaFile = null; 
-  private access_token_user : string;
+  private userInfo: UserInfo;
   isLoading: boolean;
   
-  constructor(private message:MessageService,private http: HttpClient,private mediaCapture: MediaCapture,public platform: Platform,private loginService: LoginService,private router: Router) { }
+  constructor(
+    private message:MessageService,
+    private http: HttpClient,
+    private mediaCapture: MediaCapture,
+    public platform: Platform,
+    private loginService: LoginService,
+    private router: Router) { }
 
-  ngOnInit() {
-      this.access_token_user = this.loginService.loggedUser.access_token;
+  ngOnInit(){
+    this.userInfo = this.loginService.loggedUser;
   }
 
   ngAfterViewInit() {
@@ -37,46 +44,35 @@ export class ChatPage implements OnInit, AfterViewInit {
   }
 
   onSendClick(): void {
-    if (this.userInput) {
-      this.WriteMessage(this.userInput, true);
-      const options = {
-        contexts: [{
-          name: "oauth2", 
-          lifespan: 1,
-          parameters: { userID: this.access_token_user }
-        }]
-      };
-      this.message.client.textRequest(this.userInput,options)
-      .then(response => {
-        this.WriteMessage(response.result.fulfillment.speech, false);
-        this.DialogFlowInteraction(response);
-      })
-      .catch(error => {
-        console.log('error: ' + error);
-      });
-    }
+    this.WriteMessage(this.userInput, true);
+    this.SendMessageToDialogflow(this.userInput);
+    this.isLoading = false;
     this.userInput = '';
   }
 
-  scrollToBottom(): void { this.content.scrollToBottom(SCROLL_ANIMATION_DURATION); }
-
-  WriteMessage( text: string, isFromUser: boolean){
-    this.message.SendMessage(text, isFromUser);
-    this.isLoading = isFromUser;
+  WriteMessage(text: string, isFromUser: boolean) : void {
+    this.message.WriteMessage(text, isFromUser);
+    this.isLoading = false;
     this.scrollToBottom();
   }
 
-  DialogFlowInteraction(response){
-    let dialogflow_params;
-    if (response.result.actionIncomplete == false){
+  SendMessageToDialogflow(text: string){
+    const options = this.message.getDialogflowOptions(this.userInfo.access_token);
+    this.message.client.textRequest(text,options)
+    .then(response => { 
+      this.MessageAction(response); 
+      this.WriteMessage(response.result.fulfillment.speech, false);
+    })
+    .catch(error => { console.log('error: ' + error); });
+  }
 
-        if (response.result.metadata.intentName == "Entrainement"){
-          dialogflow_params = response.result.contexts[0].parameters;
-        }
+  MessageAction(response){
+
+    if (response.result.actionIncomplete == false){
 
         if (response.result.metadata.intentName == "Entrainement - yes"){
           this.isLoading = true;
-          dialogflow_params = response.result.contexts[0].parameters;
+          let dialogflow_params = response.result.contexts[0].parameters;
           const eventAdded = {
             summary: 'Coach Man '+dialogflow_params.activity.charAt(0).toUpperCase() + dialogflow_params.activity.substring(1).toLowerCase(),
             location: '1 Avenue du Dr Albert Schweitzer, 33400 Talence',
@@ -97,32 +93,30 @@ export class ChatPage implements OnInit, AfterViewInit {
               ]
             }
           }
-          this.http.post(`https://www.googleapis.com/calendar/v3/calendars/primary/events?alt=json&access_token=${this.access_token_user}&key=AIzaSyAqdQDXdIX8WGmPXEcTLAepq8A5aag-mJI`,eventAdded)
+          this.http.post(`https://www.googleapis.com/calendar/v3/calendars/primary/events?alt=json&access_token=${this.userInfo.access_token}&key=AIzaSyAqdQDXdIX8WGmPXEcTLAepq8A5aag-mJI`,eventAdded)
           .subscribe((data: any) => {
-            console.log(data)
+            console.log(data);
             this.WriteMessage('Et voila votre séance est planifié !', false);
           },error => {
             console.log(error)
           });
-            
+           
         }
 
         if (response.result.metadata.intentName == "Progression"){
           console.log("FONCTION PROGRESSION");
-          let username=this.loginService.loggedUser.username;
-          this.router.navigate([`/profile/${username}`]);
+          this.router.navigate([`/profile/${this.userInfo.username}`]);
           // Routing vers la page Progression.
         }
 
         if (response.result.metadata.intentName == "Gamification"){
           console.log("FONCTION GAMIFICATION");
-          let username=this.loginService.loggedUser.username;
-          this.router.navigate([`/profile/${username}`]);
+          this.router.navigate([`/profile/${this.userInfo.username}`]);
           // Routing vers la page Gamification.
         }
 
         if (response.result.metadata.intentName == "Challenge"){
-          dialogflow_params = response.result.parameters;
+          let dialogflow_params = response.result.parameters;
           console.log("FONCTION CHALLENGE");
           this.router.navigate([`/profile/${dialogflow_params.username}`]);
           // Envoie un challenge à "challenger_id" contenu dans les dialogflow_params.
@@ -136,6 +130,8 @@ export class ChatPage implements OnInit, AfterViewInit {
 
     }
   }
+
+  scrollToBottom(): void { this.content.scrollToBottom(SCROLL_ANIMATION_DURATION); }
 
   onSwitchMode(): void {
     this.isTextModeEnabled = !this.isTextModeEnabled;
