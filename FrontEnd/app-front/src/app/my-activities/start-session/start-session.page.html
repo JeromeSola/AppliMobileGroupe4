@@ -1,0 +1,27 @@
+<div>
+  <br />
+  <br />
+  <section>
+    <ion-button expand="full" color="secondary" (click)="startPedometer()">Start</ion-button>
+    <ion-button expand="full" color="secondary" (click)="stopPedometer()">Stop</ion-button>
+  </section>
+  <br />
+  <br />
+  <section>
+    <ion-item>
+      <ion-label>Temps:</ion-label>
+      <ion-note slot="end" color="primary">{{stopWatch}}</ion-note>
+    </ion-item>
+    <ion-item>
+      <ion-label>Nombre de pas:</ion-label>
+      <ion-note slot="end" color="primary">{{stepsCount}}</ion-note>
+    </ion-item>
+  </section>
+  <br />
+  <br />
+  <section>
+    <ion-button expand="full" color="secondary" (click)="sendStepstoGgFit()">Send Info to gg Fit</ion-button>
+    <ion-button expand="full" color="secondary" (click)="getStepsInfoFromSession()">Get info from gg Fit
+    </ion-button>
+  </section>
+</div>

@@ -1,0 +1,27 @@
+<ion-content>
+  <ion-list style="width:max-content;">
+      <ion-item >    
+          <ion-card>
+            <ion-card-header>
+              <h5>Nombre de pas effectué dans la semaine</h5>
+              <p>Depuis le: {{weekDate}}</p>
+            </ion-card-header>
+            <ion-card-content>
+              <canvas #lineChart></canvas>
+            </ion-card-content>
+          </ion-card>
+      </ion-item>
+  
+      <ion-item >    
+          <ion-card>
+            <ion-card-header>
+              <h5>Nombre de pas effectué ce mois</h5>
+              <p>Depuis le: {{monthDate}}</p>
+            </ion-card-header>
+            <ion-card-content>
+              <canvas #monthChart></canvas>
+            </ion-card-content>
+          </ion-card>
+        </ion-item>
+  </ion-list>
+</ion-content>

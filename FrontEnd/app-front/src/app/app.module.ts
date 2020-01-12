@@ -15,7 +15,6 @@ import { AngularFirestoreModule, FirestoreSettingsToken } from '@angular/fire/fi
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { ComponentsModule } from './components/components.module';
-import {HTTP} from '@ionic-native/http/ngx'
 
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 
@@ -25,9 +24,10 @@ import { NativeStorage } from '@ionic-native/native-storage/ngx';
 
 import { Pedometer } from '@ionic-native/pedometer/ngx';
 
+
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
   ],
   entryComponents: [
   ],
@@ -51,8 +51,7 @@ import { Pedometer } from '@ionic-native/pedometer/ngx';
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: FirestoreSettingsToken, useValue: {} },
     LoginService,
-    NativeStorage,
-    HTTP,
+    NativeStorage
   ],
   bootstrap: [
     AppComponent

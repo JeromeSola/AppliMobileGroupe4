@@ -21,29 +21,23 @@ export class GoogleFitService {
         });
   }
 
-  getData2() {
+  getStepsInfo(req: any) {
+
     let data = {
       aggregateBy: [
         {
           dataSourceId: "derived:com.google.step_count.delta:com.google.android.gms:estimated_steps"
         }
       ],
-      endTimeMillis: 1578678205703,
-      startTimeMillis: 1574678205703,
+      endTimeMillis: req.endTime,
+      startTimeMillis: req.startTime,
       bucketByTime: {
-        durationMillis: 84000000
+        durationMillis: req.duration,
       }
 
     }
-    this.http.post(`https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate?alt=json&access_token=${this.loginService.loggedUser.access_token}`, data)
-      .subscribe(
-        (data: any) => {
-          console.log(data)
-        },
-        error => {
-          console.log(error)
 
-        });
+    return this.http.post(`https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate?alt=json&access_token=${this.loginService.loggedUser.access_token}`, data).toPromise()
   }
 
   // {
