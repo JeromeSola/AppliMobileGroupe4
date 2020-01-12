@@ -13,7 +13,7 @@
   <div class="container">
     <ion-list>
       <ion-item-divider class="message-divider"></ion-item-divider>
-      <div class="message" *ngFor="let message of messageList">
+      <div class="message" *ngFor="let message of message.messageList">
           <div class="user-message" class="ion-text-right" *ngIf="message.isFromUser">
             <ion-card class="user-card">
               <ion-card-content class="user-content" color="primary">

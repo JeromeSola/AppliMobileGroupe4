@@ -1,10 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 
+import { IonSlides } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 import { UserService, UserInfo } from 'src/app/services/user.service';
 import { LoginService } from '../services/login.service';
+
+const INITIAL_TAB: number = 1;
 
 @Component({
   selector: 'app-profile',
@@ -13,10 +16,17 @@ import { LoginService } from '../services/login.service';
 })
 export class ProfilePage implements OnInit {
 
+  @ViewChild('slides', { static: true }) slider: IonSlides;
+
+  public currentTab: number = INITIAL_TAB;
   private userInput: string;
   private username: string;
   private displayedUser: UserInfo;
   private userSubscription: Subscription;
+  public slideOpts: any = {
+    initialSlide: INITIAL_TAB,
+    speed: 400
+  };
 
   constructor(
     private route: ActivatedRoute,
@@ -29,7 +39,11 @@ export class ProfilePage implements OnInit {
     this.route.paramMap.subscribe(params => {
       this.username = params.get('username');
       this.userSubscription = this.userService.queryByUsername(this.username)
-      .subscribe(users => { this.displayedUser = users[0]; });
+      .subscribe(users => {
+        this.displayedUser = users[0];
+        const el: HTMLElement = document.querySelector('.progress-fill');
+        el.style.setProperty('width', '25%');
+      });
     });
   }
 
@@ -50,7 +64,7 @@ export class ProfilePage implements OnInit {
 
   onClickSearch() {
     if (this.userInput != null && this.userInput.length > 0)
-      this.router.navigateByUrl(`/profile/${this.userInput}`);
+      this.router.navigateByUrl(`/user-search/${this.username}/${this.userInput}`);
   }
 
   inputEventHanlder(keyCode: number) {
@@ -60,6 +74,15 @@ export class ProfilePage implements OnInit {
 
   onClickEdit() {
     this.router.navigateByUrl('/edit-profile');
+  }
+
+  async onClickTab(tab: number) {
+    this.currentTab = tab;
+    await this.slider.slideTo(this.currentTab);
+  }
+
+  async slideChanged() {
+    this.currentTab = await this.slider.getActiveIndex();
   }
 
 }

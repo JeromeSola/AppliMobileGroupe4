@@ -1,9 +1,40 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>userSearch</ion-title>
+    <ion-button slot="start" fill="clear" [routerLink]="['/profile', previousProfile]">
+      <ion-icon class="black-icon" name="arrow-round-back"></ion-icon>
+    </ion-button>
+    <ion-title>
+      Rechercher un utilisateur
+    </ion-title>
   </ion-toolbar>
+  <ion-item>
+    <ion-input [(ngModel)]="userInput" placeholder='Rechercher un utilisateur'></ion-input>
+    <ion-button disabled="{{!userInput}}" (click)="onClickSearch()" slot="end" fill="clear">
+      <ion-icon name="search"></ion-icon>
+    </ion-button>
+  </ion-item>
 </ion-header>
 
-<ion-content>
+<ion-content *ngIf="!isLoading && !isNoResult">
+  <ion-list>
+    <div *ngFor="let user of searchResults">
+      <ion-item [routerLink]="['/profile', user.username]">
+        <ion-avatar slot="start"><img src="../../assets/img/default-avatar.png"></ion-avatar>
+        {{ user.firstName }} {{ user.lastName }}
+      </ion-item>
+    </div>
+  </ion-list>
+</ion-content>
 
+<ion-content *ngIf="!isLoading && isNoResult">
+ <div class="ion-padding center-content">
+   Aucun utilisateur ne correspond à votre recherche.
+ </div>
+</ion-content>
+
+<ion-content *ngIf="isLoading">
+  <ion-row class="loading-screen">
+    <div class="ion-padding">Veuillez patienter...</div>
+    <ion-spinner name="crescent" color="primary"></ion-spinner>
+  </ion-row>
 </ion-content>

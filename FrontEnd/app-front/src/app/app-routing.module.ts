@@ -28,15 +28,17 @@ const routes: Routes = [
     loadChildren: () => import('./loading/loading.module').then( m => m.LoadingPageModule)
   },
   {
-    path: 'user-search',
+    path: 'user-search/:previousProfile/:query',
     loadChildren: () => import('./user-search/user-search.module').then( m => m.UserSearchPageModule)
   },
   {
     path: 'edit-profile',
     loadChildren: () => import('./edit-profile/edit-profile.module').then( m => m.EditProfilePageModule)
-  }
-
-
+  },
+  {
+    path: 'my-activities',
+    loadChildren: () => import('./my-activities/my-activities.module').then( m => m.MyActivitiesPageModule)
+  },
 ];
 
 @NgModule({
