@@ -30,21 +30,14 @@ export class MessageService {
   ReadMessage(text: string){
     let regex:RegExp=/<br>/gi;
     text = text.replace(regex,'');
-    this.tts.speak({
-      text: text,
-      locale: 'fr-FR'
-    })
+    this.tts.speak({text: text, locale: 'fr-FR'})
     .then(() => {})
     .catch((reason: any) => console.log(reason));
   }
 
   getDialogflowOptions(userInfo: UserInfo){
     const options = {
-      contexts: [{
-        name: "oauth2", 
-        lifespan: 1,
-        parameters: { userInfo: userInfo}
-      }]
+      contexts: [{ name: "oauth2",  lifespan: 1, parameters: {userInfo: userInfo}}]
     };
     return options;
   }

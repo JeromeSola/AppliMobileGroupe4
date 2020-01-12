@@ -46,27 +46,27 @@ export class ChatPage implements OnInit, AfterViewInit {
   onSendClick(): void {
     this.SendMessageToFront(this.userInput, true);
     this.SendMessageToDialogflow(this.userInput);
-    this.EndMessage();
+    this.ResetInput();
   }
 
   SendMessageToFront(text: string, isFromUser: boolean) : void {
-    this.message.WriteMessage(text, isFromUser);
     this.isLoading = false;
+    this.message.WriteMessage(text, isFromUser);
     this.scrollToBottom();
   }
 
   SendMessageToDialogflow(text: string){
+    this.isLoading = true;
     const options = this.message.getDialogflowOptions(this.userInfo);
     this.message.client.textRequest(text,options)
     .then(response => { 
-      this.MessageAction(response); 
-      this.SendMessageToFront(response.result.fulfillment.speech, false);
+      this.MessageAction(response);
+      this.SendMessageToFront(response.result.fulfillment.speech, false); 
     })
-    .catch(error => { console.log('error: ' + error); });
+    .catch(error => {  this.SendMessageToFront('Désolé, nous avons rencontré une erreur: ' + error, false); });
   }
 
-  EndMessage(){
-    this.isLoading = false;
+  ResetInput(){
     this.userInput = '';
   }
 
@@ -74,64 +74,34 @@ export class ChatPage implements OnInit, AfterViewInit {
 
     if (response.result.actionIncomplete == false){
 
-        if (response.result.metadata.intentName == "Entrainement - yes"){
-          this.isLoading = true;
-          let dialogflow_params = response.result.contexts[0].parameters;
-          const eventAdded = {
-            summary: 'Coach Man '+dialogflow_params.activity.charAt(0).toUpperCase() + dialogflow_params.activity.substring(1).toLowerCase(),
-            location: '1 Avenue du Dr Albert Schweitzer, 33400 Talence',
-            description: 'Seance',
-            start: {
-              dateTime: dialogflow_params.date+'T'+dialogflow_params.time,
-              timeZone: 'Europe/Paris'
-            },
-            end: {
-              dateTime: dialogflow_params.date+'T'+String(parseInt(dialogflow_params.time.substring(0,2))+1)+dialogflow_params.time.substring(2),
-              timeZone: 'Europe/Paris'
-            },
-            attendees: [],
-            reminders: {
-              useDefault: false,
-              overrides: [
-                { method: 'popup', minutes: 10 }
-              ]
-            }
-          }
-          this.http.post(`https://www.googleapis.com/calendar/v3/calendars/primary/events?alt=json&access_token=${this.userInfo.access_token}&key=AIzaSyAqdQDXdIX8WGmPXEcTLAepq8A5aag-mJI`,eventAdded)
-          .subscribe((data: any) => {
-            console.log(data);
-            this.SendMessageToFront('Et voila votre séance est planifié !', false);
-          },error => {
-            console.log(error)
-          });
-           
-        }
+      switch (response.result.metadata.intentName) {
+        case "Entrainement - yes":
+          //this.router.navigate([`/my-planning/`]);
+          break;
 
-        if (response.result.metadata.intentName == "Progression"){
-          console.log("FONCTION PROGRESSION");
+        case "Progression":
           this.router.navigate([`/profile/${this.userInfo.username}`]);
-          // Routing vers la page Progression.
-        }
+          break;
 
-        if (response.result.metadata.intentName == "Gamification"){
-          console.log("FONCTION GAMIFICATION");
+        case "Gamification":
           this.router.navigate([`/profile/${this.userInfo.username}`]);
-          // Routing vers la page Gamification.
-        }
+          break;
 
-        if (response.result.metadata.intentName == "Challenge"){
-          let dialogflow_params = response.result.parameters;
-          console.log("FONCTION CHALLENGE");
-          this.router.navigate([`/profile/${dialogflow_params.username}`]);
-          // Envoie un challenge à "challenger_id" contenu dans les dialogflow_params.
-        }
-
-        if (response.result.metadata.intentName == "Start"){
-          console.log("FONCTION START");
+        case "Start":
           this.router.navigate(['/my-activities/']);
-          // Routing vers la page Gamification.
-        }
+          break;
 
+        case "Rechercher":
+            if (response.result.fulfillment.speech == "Désolé, nous n'avons pas trouver l'utilisateur que vous chercher.")
+              break;
+            const num = response.result.fulfillment.speech.search(/[^\w\s]/g);
+            this.router.navigate([`/profile/${response.result.fulfillment.speech.slice(num+2)}`]);   
+            break;     
+
+        case "Challenge":
+          this.router.navigate([`/profile/${response.result.parameters.challenger_name[0]}`]);   
+          break;     
+      }
     }
   }
 
