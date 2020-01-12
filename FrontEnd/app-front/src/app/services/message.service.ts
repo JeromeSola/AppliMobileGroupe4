@@ -11,6 +11,8 @@ export class MessageService {
   public client:ApiAiClient;
   constructor() {
      this.messageList=[];
-     this.client=new ApiAiClient({accessToken: accessToken})  
+     this.client=new ApiAiClient({accessToken: accessToken})
+     this.messageList.push(new Message('Bonjour dîtes"ok coach"pour commencer à converser avec votre coach personnel',false,new Date()))  
   }
+
 }

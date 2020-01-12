@@ -28,7 +28,11 @@ export class ChatPage implements OnInit, AfterViewInit {
   private access_token_user : string;
   isLoading: boolean;
   
-  constructor(private message:MessageService,private http: HttpClient,private mediaCapture: MediaCapture,private tts: TextToSpeech,public platform: Platform,private loginService: LoginService,) { }
+  constructor(private message:MessageService,
+    private http: HttpClient,
+    private mediaCapture: MediaCapture,
+    private tts: TextToSpeech,public platform: Platform,
+    private loginService: LoginService,) { }
 
   ngOnInit() {
       this.access_token_user=this.loginService.loggedUser.access_token
