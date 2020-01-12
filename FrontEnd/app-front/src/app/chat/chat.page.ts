@@ -44,26 +44,30 @@ export class ChatPage implements OnInit, AfterViewInit {
   }
 
   onSendClick(): void {
-    this.WriteMessage(this.userInput, true);
+    this.SendMessageToFront(this.userInput, true);
     this.SendMessageToDialogflow(this.userInput);
-    this.isLoading = false;
-    this.userInput = '';
+    this.EndMessage();
   }
 
-  WriteMessage(text: string, isFromUser: boolean) : void {
+  SendMessageToFront(text: string, isFromUser: boolean) : void {
     this.message.WriteMessage(text, isFromUser);
     this.isLoading = false;
     this.scrollToBottom();
   }
 
   SendMessageToDialogflow(text: string){
-    const options = this.message.getDialogflowOptions(this.userInfo.access_token);
+    const options = this.message.getDialogflowOptions(this.userInfo);
     this.message.client.textRequest(text,options)
     .then(response => { 
       this.MessageAction(response); 
-      this.WriteMessage(response.result.fulfillment.speech, false);
+      this.SendMessageToFront(response.result.fulfillment.speech, false);
     })
     .catch(error => { console.log('error: ' + error); });
+  }
+
+  EndMessage(){
+    this.isLoading = false;
+    this.userInput = '';
   }
 
   MessageAction(response){

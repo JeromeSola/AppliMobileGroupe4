@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Message } from './message'
+import { UserInfo } from '../services/user.service';
 import { TextToSpeech } from '@ionic-native/text-to-speech/ngx';
 import { ApiAiClient } from 'api-ai-javascript/es6/ApiAiClient'
 import { accessToken } from '../../../../../APIKeys/dialogflow';
@@ -37,12 +38,12 @@ export class MessageService {
     .catch((reason: any) => console.log(reason));
   }
 
-  getDialogflowOptions(access_token: string){
+  getDialogflowOptions(userInfo: UserInfo){
     const options = {
       contexts: [{
         name: "oauth2", 
         lifespan: 1,
-        parameters: { userID: access_token}
+        parameters: { userInfo: userInfo}
       }]
     };
     return options;
