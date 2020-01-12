@@ -22,7 +22,7 @@ export class AppComponent {
     {
       title: 'Mes activités',
       url: '/my-activities',
-      icon: 'settings'
+      icon: 'walk'
     },
     {
       title: 'Assistant',
