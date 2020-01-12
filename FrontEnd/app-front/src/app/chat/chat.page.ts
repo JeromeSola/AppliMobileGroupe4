@@ -100,7 +100,7 @@ export class ChatPage implements OnInit, AfterViewInit {
           this.http.post(`https://www.googleapis.com/calendar/v3/calendars/primary/events?alt=json&access_token=${this.userInfo.access_token}&key=AIzaSyAqdQDXdIX8WGmPXEcTLAepq8A5aag-mJI`,eventAdded)
           .subscribe((data: any) => {
             console.log(data);
-            this.WriteMessage('Et voila votre séance est planifié !', false);
+            this.SendMessageToFront('Et voila votre séance est planifié !', false);
           },error => {
             console.log(error)
           });
