@@ -86,7 +86,18 @@
         </ion-list>
       </ion-slide>
       <ion-slide>
-        <div class="ion-padding">Cet utilisateur n'a publié aucune activité.</div>
+        <div class="ion-padding" *ngIf="activities.length == 0">Cet utilisateur n'a publié aucune activité.</div>
+        <ion-list *ngIf="activities.length > 0">
+          <ion-card *ngFor="let activity of activities">
+            <ion-card-header>
+              <ion-card-title>{{ getActivityTitle(activity) }}</ion-card-title>
+              <ion-card-subtitle>{{ getStartTime(activity) }} ({{ getActivityLength(activity) }})</ion-card-subtitle>
+            </ion-card-header>
+          </ion-card>
+          <ion-card-content>
+            <div class="ion-padding">{{ getActivityDescription(activity) }}</div>
+          </ion-card-content>
+        </ion-list>
       </ion-slide>
       <ion-slide>
         <div class="slide-content">
