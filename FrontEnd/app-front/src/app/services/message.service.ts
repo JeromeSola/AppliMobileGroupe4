@@ -1,9 +1,14 @@
+// Module
 import { Injectable } from '@angular/core';
-import { Message } from './message'
-import { UserInfo } from '../services/user.service';
 import { TextToSpeech } from '@ionic-native/text-to-speech/ngx';
 import { ApiAiClient } from 'api-ai-javascript/es6/ApiAiClient'
+
+// Variable & Interface
 import { accessToken } from '../../../../../APIKeys/dialogflow';
+import { Message } from './message'
+
+// Service
+import { LoginService } from 'src/app/services/login.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +18,10 @@ export class MessageService {
   public messageList:Message[];
   public client:ApiAiClient;
 
-  constructor(private tts: TextToSpeech) {
+  constructor(
+    private tts: TextToSpeech,
+    private loginService: LoginService,
+  ) {
      this.messageList=[];
      this.client=new ApiAiClient({accessToken: accessToken});
   }
@@ -35,11 +43,16 @@ export class MessageService {
     .catch((reason: any) => console.log(reason));
   }
 
-  getDialogflowOptions(userInfo: UserInfo){
-    const options = {
-      contexts: [{ name: "oauth2",  lifespan: 1, parameters: {userInfo: userInfo}}]
+  getDialogflowOptions(){
+    var options = {
+      contexts: [{ name: "oauth2",  lifespan: 1, parameters: {userInfo: this.loginService.loggedUser}}]
     };
     return options;
   }
+
+  RedirectionPage(name: string){
+    this.loginService.RedirectionPage(name);
+  }
+  
 }
 
