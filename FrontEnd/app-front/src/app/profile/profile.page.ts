@@ -3,7 +3,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { IonSlides } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-
+import { CalendarService} from '../services/calendar.service'
 import { UserService, UserInfo } from 'src/app/services/user.service';
 import { LoginService } from '../services/login.service';
 
@@ -27,12 +27,14 @@ export class ProfilePage implements OnInit {
     initialSlide: INITIAL_TAB,
     speed: 400
   };
+  private eventList:any=[];
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private userService: UserService,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private calendar:CalendarService
   ) { }
 
   ngOnInit() {
@@ -45,6 +47,16 @@ export class ProfilePage implements OnInit {
         el.style.setProperty('width', '25%');
       });
     });
+    this.calendar.getMySportEvents(this.loginService.loggedUser.access_token)
+    .subscribe((data: any) => {
+      this.eventList=data.items
+      console.log(data)
+      console.log(this.eventList)
+    },(error)=>{
+      this.eventList=[{
+        title:"Error"
+      }]
+    })
   }
 
   ngOnDestroy() {

@@ -9,6 +9,7 @@ import { Message } from '../services/message'
 import { MediaCapture, MediaFile, CaptureError, CaptureAudioOptions } from '@ionic-native/media-capture/ngx';
 import { HttpClient } from '@angular/common/http'
 import { Router } from '@angular/router';
+import {CalendarService} from '../services/calendar.service'
 
 const SCROLL_ANIMATION_DURATION: number = 500;
 
@@ -32,8 +33,10 @@ export class ChatPage implements OnInit, AfterViewInit {
     private http: HttpClient,
     private mediaCapture: MediaCapture,
     public platform: Platform,
+    private calendar:CalendarService,
     private loginService: LoginService,
     private router: Router) { }
+    
 
   ngOnInit(){
     this.userInfo = this.loginService.loggedUser;
@@ -44,26 +47,30 @@ export class ChatPage implements OnInit, AfterViewInit {
   }
 
   onSendClick(): void {
-    this.WriteMessage(this.userInput, true);
+    this.isLoading=true
+    this.SendMessageToFront(this.userInput, true);
     this.SendMessageToDialogflow(this.userInput);
-    this.isLoading = false;
-    this.userInput = '';
+    this.EndMessage();
   }
 
-  WriteMessage(text: string, isFromUser: boolean) : void {
+  SendMessageToFront(text: string, isFromUser: boolean) : void {
     this.message.WriteMessage(text, isFromUser);
-    this.isLoading = false;
     this.scrollToBottom();
   }
 
   SendMessageToDialogflow(text: string){
-    const options = this.message.getDialogflowOptions(this.userInfo.access_token);
+    const options = this.message.getDialogflowOptions(this.userInfo);
     this.message.client.textRequest(text,options)
     .then(response => { 
       this.MessageAction(response); 
-      this.WriteMessage(response.result.fulfillment.speech, false);
+      this.SendMessageToFront(response.result.fulfillment.speech, false);
+      this.isLoading=false;
     })
-    .catch(error => { console.log('error: ' + error); });
+    .catch(error => { this.isLoading=false;console.log('error: ' + error); });
+  }
+
+  EndMessage(){
+    this.userInput = '';
   }
 
   MessageAction(response){
@@ -73,32 +80,20 @@ export class ChatPage implements OnInit, AfterViewInit {
         if (response.result.metadata.intentName == "Entrainement - yes"){
           this.isLoading = true;
           let dialogflow_params = response.result.contexts[0].parameters;
-          const eventAdded = {
-            summary: 'Coach Man '+dialogflow_params.activity.charAt(0).toUpperCase() + dialogflow_params.activity.substring(1).toLowerCase(),
-            location: '1 Avenue du Dr Albert Schweitzer, 33400 Talence',
-            description: 'Seance',
-            start: {
-              dateTime: dialogflow_params.date+'T'+dialogflow_params.time,
-              timeZone: 'Europe/Paris'
-            },
-            end: {
-              dateTime: dialogflow_params.date+'T'+String(parseInt(dialogflow_params.time.substring(0,2))+1)+dialogflow_params.time.substring(2),
-              timeZone: 'Europe/Paris'
-            },
-            attendees: [],
-            reminders: {
-              useDefault: false,
-              overrides: [
-                { method: 'popup', minutes: 10 }
-              ]
-            }
-          }
-          this.http.post(`https://www.googleapis.com/calendar/v3/calendars/primary/events?alt=json&access_token=${this.userInfo.access_token}&key=AIzaSyAqdQDXdIX8WGmPXEcTLAepq8A5aag-mJI`,eventAdded)
+          console.log(dialogflow_params)
+          const eventAdded = this.calendar.parseEvent(dialogflow_params)
+          this.calendar.createSportEvent(this.userInfo.access_token,eventAdded)
           .subscribe((data: any) => {
             console.log(data);
-            this.WriteMessage('Et voila votre séance est planifié !', false);
+            this.SendMessageToFront('Et voila votre séance est planifié !', false);
           },error => {
-            console.log(error)
+            if (error.status==401){
+              this.loginService.login()
+              this.SendMessageToDialogflow('Vos authorisations google ont expiré. Reconnectez vous puis réessayez!')
+            }else{
+              this.SendMessageToFront('Malheureusement un problème avec votre calendrier est survenue veuillez réessayer plus tard !', false);
+              console.log(error)
+            }
           });
            
         }

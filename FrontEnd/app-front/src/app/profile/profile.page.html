@@ -53,11 +53,24 @@
       </ion-row>
       <ion-slides class="slides" #slides (ionSlideDidChange)="slideChanged()" [options]="slideOpts">
         <ion-slide>
-          <div class="slide-content">
-            <!--
-              JEROOOOOOME C ICI POUR LE CODE DU SLIDE DU PLANNING
-            -->
-            <div class="ion-padding">Cet utilisateur n'a publié aucun planning.</div>
+          <div class="slide-content no-scroll"  >
+            <ion-list>
+              <ion-item-sliding *ngFor="let event of eventList">
+                <ion-item>
+                  <ion-card>
+                    <ion-item>
+                      <ion-icon name="fitness" slot="start"></ion-icon>
+                      <ion-label>{{event.summary}}</ion-label>
+                      <ion-button color="danger" fill="outline" slot="end"><ion-icon slot="icon-only" name="close-circle"></ion-icon></ion-button>
+                    </ion-item>
+                  
+                    <ion-card-content>
+                      {{event.description}}
+                    </ion-card-content>
+                  </ion-card>
+                </ion-item>
+              </ion-item-sliding>
+            </ion-list>
           </div>
         </ion-slide>
         <ion-slide>

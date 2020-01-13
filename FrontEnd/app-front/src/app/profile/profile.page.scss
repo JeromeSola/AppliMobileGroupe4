@@ -45,6 +45,10 @@ div.border-wrapper > ion-img {
     padding-bottom: 20px;
     width: 100%;
 }
+.swiper-slide {
+    overflow-y: scroll;
+    display: block;
+}
 ion-slide.swiper-slide {
     align-items: flex-start;
 }
