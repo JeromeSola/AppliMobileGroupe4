@@ -39,6 +39,7 @@ const routes: Routes = [
     path: 'my-activities',
     loadChildren: () => import('./my-activities/my-activities.module').then( m => m.MyActivitiesPageModule)
   },
+
 ];
 
 @NgModule({
