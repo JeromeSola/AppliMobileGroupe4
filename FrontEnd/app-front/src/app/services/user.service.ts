@@ -9,7 +9,13 @@ export interface UserInfo {
   gmail: string,
   firstName: string,
   lastName: string,
-  access_token: string
+  access_token: string,
+  achievements: number[],
+  firstNameLower: string,
+  lastNameLower: string,
+  friends: string[],
+  level: number,
+  totalExperience: number
 }
 
 @Injectable({

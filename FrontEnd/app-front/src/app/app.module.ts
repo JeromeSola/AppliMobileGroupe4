@@ -19,6 +19,7 @@ import { ComponentsModule } from './components/components.module';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 
 import { LoginService } from './services/login.service';
+import { GameService } from './services/game.service';
 import {GoogleFitService} from './services/google-fit.service';
 import { NativeStorage } from '@ionic-native/native-storage/ngx';
 
@@ -51,7 +52,8 @@ import { Pedometer } from '@ionic-native/pedometer/ngx';
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: FirestoreSettingsToken, useValue: {} },
     LoginService,
-    NativeStorage
+    NativeStorage,
+    GameService
   ],
   bootstrap: [
     AppComponent
