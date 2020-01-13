@@ -1,0 +1,24 @@
+<ion-content>
+    <div *ngIf="activitiesToShow.length>0">
+        <ion-list>
+
+            <ion-item *ngFor="let activity of activitiesToShow">
+
+                <ion-icon name="walk" class="circle" slot="start"></ion-icon>
+
+                <ion-label>
+                    <h2>Date: {{activity.date}}</h2>
+                    <h3>{{activity.period}}</h3>
+                    <h4>Activité: Marche</h4>
+                    <p>Nombre de pas: {{activity.stepsNumber}}</p>
+                    <p>Durée de l'activité: {{activity.duration}} </p>
+                </ion-label>
+
+            </ion-item>
+        </ion-list>
+        <ion-infinite-scroll (ionInfinite)="loadActivitiesToshow($event)">
+            <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more data…">
+            </ion-infinite-scroll-content>
+        </ion-infinite-scroll>
+    </div>
+</ion-content>

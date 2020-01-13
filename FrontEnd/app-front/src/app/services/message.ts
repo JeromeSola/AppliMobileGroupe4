@@ -1,8 +1,8 @@
 export class Message {
 
     constructor(
-        private _htmlContent: string = '',
-        private _isFromUser: boolean = true,
+        private _htmlContent: string,
+        private _isFromUser: boolean,
         private _sendDate: Date = new Date()
     ) { }
 

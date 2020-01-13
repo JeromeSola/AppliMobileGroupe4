@@ -1,13 +1,17 @@
+// Module
 import { Injectable } from '@angular/core';
-
 import { Platform } from '@ionic/angular';
 import { HttpClient } from '@angular/common/http';
-import { googleId } from '../../../../../APIKeys/googleId';
-
-import { UserCloudFuncService } from './user-cloud-func.service';
-import { UserInfo, UserService } from './user.service';
-import { StorageService, KEYS } from '../services/storage.service';
 import { Router } from '@angular/router';
+
+// Variable & Interface
+import { googleId } from '../../../../../APIKeys/googleId';
+import { UserInfo } from './user.service';
+
+// Service 
+import { UserService } from './user.service';
+import { UserCloudFuncService } from './user-cloud-func.service';
+import { StorageService, KEYS } from '../services/storage.service';
 
 declare var window: any;
 
@@ -114,5 +118,11 @@ export class LoginService {
         reject("Une erreur est survenue lors de la tentative de connexion à Google");
       });
     });
-  } 
+  }
+  
+  RedirectionPage(name: string){
+    if (name == '/profile/') 
+      this.router.navigate([`/profile/${this.loggedUser.username}`]);
+    else  this.router.navigate([name]);
+  }
 }

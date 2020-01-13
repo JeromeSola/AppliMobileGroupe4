@@ -8,11 +8,16 @@ export class CalendarService {
   constructor(private http: HttpClient,) { }
 
   getMySportEvents(access_token){
-    return this.http.get(`https://www.googleapis.com/calendar/v3/calendars/primary/events?alt=json&access_token=${access_token}&key=AIzaSyAqdQDXdIX8WGmPXEcTLAepq8A5aag-mJI`)
+    return this.http.get(`https://www.googleapis.com/calendar/v3/calendars/primary/events?singleEvents=true&orderBy=startTime&alt=json&access_token=${access_token}&key=AIzaSyAqdQDXdIX8WGmPXEcTLAepq8A5aag-mJI`)
   }
 
   createSportEvent(access_token,event){
     return this.http.post(`https://www.googleapis.com/calendar/v3/calendars/primary/events?alt=json&access_token=${access_token}&key=AIzaSyAqdQDXdIX8WGmPXEcTLAepq8A5aag-mJI`,event)
+  }
+
+  
+  deleteSportEvent(access_token,eventId){
+    return this.http.delete(`https://www.googleapis.com/calendar/v3/calendars/primary/events/${eventId}?alt=json&access_token=${access_token}&key=AIzaSyAqdQDXdIX8WGmPXEcTLAepq8A5aag-mJI`)
   }
 
   parseEvent(dialogflow_params){
@@ -58,5 +63,27 @@ export class CalendarService {
     }
 
      
+  }
+
+  parseDate(event){
+    let monthParser={
+      "0":"01",
+      "1":"02",
+      "2":"03",
+      "3":"04",
+      "4":"05",
+      "5":"06",
+      "6":"07",
+      "7":"08",
+      "8":"09",
+      "9":"10",
+      "10":"11",
+      "11":"12",
+    }
+    let dateStart=new Date(event.start.dateTime)
+    let dateEnd=new Date(event.end.dateTime)
+    let stringDateStart='Start: '+dateStart.getDate()+'/'+ monthParser[dateStart.getMonth()]+'/'+dateStart.getFullYear()+' at '+dateStart.getHours()+':'+(String(dateStart.getMinutes()).length==1?dateStart.getMinutes()+'0':dateStart.getMinutes());
+    let stringDateEnd= 'End: '+dateEnd.getDate()+'/'+ monthParser[dateEnd.getMonth()]+'/'+dateEnd.getFullYear()+' at '+dateEnd.getHours()+':'+(String(dateEnd.getMinutes()).length==1?dateEnd.getMinutes()+'0':dateEnd.getMinutes());
+    return stringDateStart+' - '+stringDateEnd
   }
 }

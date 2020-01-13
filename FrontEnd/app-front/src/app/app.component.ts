@@ -6,6 +6,7 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 
 import { LoginService } from 'src/app/services/login.service';
 import { StorageService, KEYS } from './services/storage.service';
+import { GameService } from './services/game.service';
 
 @Component({
   selector: 'app-root',
@@ -22,7 +23,7 @@ export class AppComponent {
     {
       title: 'Mes activités',
       url: '/my-activities',
-      icon: 'settings'
+      icon: 'walk'
     },
     {
       title: 'Assistant',
@@ -41,7 +42,8 @@ export class AppComponent {
     private splashScreen: SplashScreen,
     private statusBar: StatusBar,
     private loginService: LoginService,
-    private storageService: StorageService
+    private storageService: StorageService,
+    private gameService: GameService
   ) {
     this.initializeApp();
   }
