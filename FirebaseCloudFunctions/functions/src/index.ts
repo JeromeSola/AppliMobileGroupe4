@@ -115,8 +115,10 @@ exports.updateUserLastName = functions.https.onRequest(async (req, res) => {
             
             console.log(doc.id, " => ", doc.data());
             if (doc.data().gmail === req.query.gmail) {
+                
                 let returnDoc = doc.data()
                 returnDoc.lastName = req.query.newLastName
+
                 db.collection("Users").doc(doc.id).update({
                     lastName: req.query.newLastName,
                     lastNameLower: req.query.newLastName.toLowerCase()
@@ -142,10 +144,12 @@ exports.updateUserUserName = functions.https.onRequest(async (req, res) => {
     db.collection("Users").get().then(function (querySnapshot: any) {
         querySnapshot.forEach(function (doc: any) {
             
-            console.log(doc.id, " => ", doc.data());
+            
             if (doc.data().gmail === req.query.gmail) {
-                let returnDoc = doc.data()
+
+                const returnDoc = doc.data()
                 returnDoc.username = req.query.newUserName
+
                 db.collection("Users").doc(doc.id).update({
                     username: req.query.newUserName
                 }).then(() => {
@@ -170,11 +174,11 @@ exports.updateUserAccessToken = functions.https.onRequest(async (req, res) => {
     res.set('Access-Control-Allow-Origin', '*');
     db.collection("Users").get().then(async function (querySnapshot: any) {
         querySnapshot.forEach(function (doc: any) {
-            // doc.data() is never undefined for query doc snapshots
-            console.log(doc.id, " => ", doc.data());
             if (doc.data().gmail === req.query.gmail) {
-                let returnDoc = doc.data()
+
+                const returnDoc = doc.data()
                 returnDoc.access_token = req.query.newAccessToken
+
                 db.collection("Users").doc(doc.id).update({
                     access_token: req.query.newAccessToken                    
                 }).then(() => {
@@ -203,10 +207,11 @@ exports.updateUserAccessToken = functions.https.onRequest(async (req, res) => {
 */
 exports.createRecordedActivity = functions.https.onRequest(async (req, res) => {
     res.set('Access-Control-Allow-Origin', '*');
+    const valueNumber: number = Number(req.query.value) 
     const activityDoc = {
         gmail: req.query.gmail,
         activityType: req.query.activityType,
-        value: req.query.value, 
+        value: valueNumber,
         startTime: req.query.startTime,
         endTime: req.query.endTime
     }
@@ -228,16 +233,19 @@ exports.createRecordedActivity = functions.https.onRequest(async (req, res) => {
 */
 exports.addFriend = functions.https.onRequest(async (req, res) => {
     res.set('Access-Control-Allow-Origin', '*');
-    db.collection("Users").get().then(async function (querySnapshot: any) {
+    db.collection("Users").get().then(function (querySnapshot: any) {
+
         querySnapshot.forEach(function (doc: any) {
+
+            const newFriend: string = req.query.friend
             
-            console.log(doc.id, " => ", doc.data());
-            if (doc.data().gmail === req.query.gmail) {
-                const newFriend: string = req.query.friend
-                let returnDoc = doc.data()               
+            if (doc.data().gmail === req.query.gmail && !(doc.data().friends.includes(newFriend)) ) {
+              
+                const returnDoc = doc.data()               
                 returnDoc.friends.push(newFriend)
+
                 db.collection("Users").doc(doc.id).update({
-                    friends: Firestore.FieldValue.arrayUnion(req.query.friend)
+                    friends: Firestore.FieldValue.arrayUnion(newFriend)
                 }).then(() => {
                     return res.status(200).send(returnDoc);
                 }).catch((err: any) => {
@@ -245,7 +253,6 @@ exports.addFriend = functions.https.onRequest(async (req, res) => {
                     return res.status(404).send({ error: 'unable to store', err });
                 });
             }
-
         })
     })
 });
@@ -302,97 +309,110 @@ exports.getUserInformation = functions.https.onRequest(async (req, res) => {
 
 
 /*  
-    Fonction qui ajoute l'xp au bon utilisateur quand une activité est créée, puis vérifie si l'utilisateur a gagné un niveau
+    Fonction qui ajoute l'xp au bon utilisateur quand une activité est créée, puis vérifie si 
+    des succès ont été débloqués
 */
 exports.onRecordedActivityCreate = functions.firestore
     .document('RecordedActivities/{activityId}')
     .onCreate(async (snap: any, context: any) => {
-        // Get an object representing the document
-        // e.g. {'name': 'Marie', 'age': 66}
 
-        const value = snap.data()
-        const activity: string = value.activityType;
-        const userMail = value.gmail;
+        const activity: string = snap.data().activityType;
+        const userMail = snap.data().gmail;
 
-        addXpFromActivity(userMail, activity)
-        checkAchievements(userMail)
-        
+
+        await addXpFromActivity(userMail, activity).then( ()=> {
+            checkAchievements(userMail)
+        }).catch((error:any) => console.error(error))
     })
 
 /*  
-    appelle checkLevelUp quand un doc utilisateur est modifié
+    appelle checkLevelUp quand l'xp d'un utilisateur a été modifiée
 */
 exports.onUserUpdate = functions.firestore
     .document('Users/{userId}')
     .onUpdate(async (change: any, context: any) => {
-        checkLevelUp(change.after.data().gmail)
+        if (change.after.data().totalExperience !== change.before.data().totalExperience){
+            checkLevelUp(change.after.data().gmail)
+        }       
     })
 
 
 /* 
-    Fonction qui renvoie la quantité d'expérience que donne une certaine activité 
+    Fonction qui ajoute au user la quantité d'expérience que donne une certaine activité 
 */
 function addXpFromActivity(userMail: string, activityType: string) {
     
-    db.collection("ActivitiesExperience").get().then((querySnapshot: any) => {
-        let xpReturn: number = 0
-        querySnapshot.forEach(function (doc: any) {
-            if (doc.data().activity === activityType) {
-                xpReturn = doc.data().xp;
-            }
-        });
-        return (xpReturn)
-    }).then((xpReturn: number)=>{
-        db.collection("Users").get().then(function (querySnapshot: any) {
-            querySnapshot.forEach(function (doc: any) {
-                if (doc.data().gmail === userMail){
-                    const updatedExperience: number = doc.data().totalExperience + xpReturn;
-                    db.collection("Users").doc(doc.id).update({       // attribue l'expérience
-                            totalExperience: updatedExperience                       
-                    })
+    const myPromise = new Promise ((resolve: any, reject: any) =>{
+
+        db.collection("ActivitiesExperience").get().then((querySnapshotActivities: any) => {
+            let xpReturn: number = 0
+            querySnapshotActivities.forEach(function (doc: any) {
+                if (doc.data().activity === activityType) {
+                    xpReturn = doc.data().xp;
                 }
-            })
-        })
+            });    
+            db.collection("Users").get().then(function (querySnapshotUsers: any) {
+                querySnapshotUsers.forEach(function (doc: any) {
+                    if (doc.data().gmail === userMail){
+                        const updatedExperience: number = doc.data().totalExperience + xpReturn
+                        db.collection("Users").doc(doc.id).update({       // attribue l'expérience
+                        totalExperience: updatedExperience                       
+                        }).then(() => resolve())
+                    }                   
+                })
+            }).catch((error: any) => console.error(error)) 
+        }).catch((error: any) => console.error(error)) 
     })
+    return myPromise
+     
 }
 
 /* 
     Fonction qui vérifie si de nouveaux succès ont été débloqués et actualise la liste de succès
 */
 function checkAchievements(gmail: string) {
-    db.collection("Users").get().then(async (querySnapshot: any)=> {       
-        querySnapshot.forEach(async function (doc: any) {           
+    db.collection("Users").get().then( (querySnapshot: any)=> {       
+        querySnapshot.forEach(function (doc: any) {           
             if (doc.data().gmail === gmail) {
                 
                 let currentAchievements =  doc.data().achievements
-                     
-                checkAchievementThreeRunningWeek(gmail).then( (result: boolean)  => {                     
-                    if ( ( currentAchievements.includes("1") ) || !result) {  
-                        console.log("no new achievements 1" )                       
-                    }else{
-                        currentAchievements = currentAchievements.concat(doc.data().achievements.concat("1"))
-                        db.collection("Users").doc(doc.id).update({                                  
-                            achievements : currentAchievements                        
-                        })
-                    }                                                           
-                }).catch((error) => console.error(error)).then(()=>{
-                    checkAchievementSevenRunning(gmail).then(async (result: boolean)  => {                     
-                        if ( ( currentAchievements.includes("2") ) || !result) {  
-                            console.log("no new achievements 2" )                       
-                        }else{
-                            currentAchievements = currentAchievements.concat("2")
-                            db.collection("Users").doc(doc.id).update({       
-                                
-                                achievements : currentAchievements                       
-                            })
-                        }                                                           
-                    }).catch((error) => console.error(error)) 
-                }).catch((error) => console.error(error))
+                let currentExperience =  doc.data().totalExperience
                     
-                
-                
-                
-                
+                checkAchievementThreeRunningWeek(gmail).then( (result: boolean)  => {                     
+                    if ( !( currentAchievements.includes(1) ) && result) {  
+                        currentAchievements = currentAchievements.concat(1)
+                        currentExperience += 100
+                    }       
+                    db.collection("Users").doc(doc.id).update({                                  
+                        achievements : currentAchievements, 
+                        totalExperience : currentExperience                       
+                    })
+                    .then(()=>{
+                        checkAchievementSevenRunning(gmail).then( (result2: boolean)  => {                     
+                            if ( !( currentAchievements.includes(2) ) && result2) {                         
+                                currentAchievements = currentAchievements.concat(2)
+                                currentExperience += 50
+                            }        
+                            db.collection("Users").doc(doc.id).update({                                       
+                                achievements : currentAchievements,
+                                totalExperience : currentExperience                        
+                            })                                                    
+                        
+                            .then(()=>{
+                                checkAchievementHundredPushups(gmail).then( (result3: boolean)  => {                     
+                                    if ( !( currentAchievements.includes(3) ) && result3) {                         
+                                        currentAchievements = currentAchievements.concat(3)
+                                        currentExperience += 150
+                                    }        
+                                    db.collection("Users").doc(doc.id).update({                                       
+                                        achievements : currentAchievements,
+                                        totalExperience : currentExperience                        
+                                    })                                                   
+                                }).catch((error: any) => console.error(error)) 
+                            })
+                        }).catch((error: any) => console.error(error))            
+                    })
+                }).catch((error: any) => console.error(error)) 
             }                                                
         })          
     })
@@ -401,52 +421,69 @@ function checkAchievements(gmail: string) {
     
 
 
+
 /* 
     Fonction qui vérifie si le succès 3 running en une semaine a été réalisé
 */
-async function checkAchievementThreeRunningWeek(gmail: string): Promise<boolean> {
+async function checkAchievementThreeRunningWeek(gmail: string): Promise<any> {
     const currentDate: number = Date.now();
-    const myPromise = await db.collection("RecordedActivities").get().then((querySnapshot: any) => {
-        let isAchievement: boolean = false;
-        let activitiesThisWeek: number = 0;
-        querySnapshot.forEach(function (doc: any) {
-            // doc.data() is never undefined for query doc snapshots
-            if (doc.data().activityType === "running" && doc.data().gmail === gmail) {
-                if ((currentDate - doc.data().startTime) < 1000 * 60 * 60 * 24 * 7) {
-                    activitiesThisWeek = activitiesThisWeek + 1
+    const myPromise = new Promise ((resolve: any, reject: any) =>{
+        db.collection("RecordedActivities").get().then((querySnapshot: any) => {
+            let isAchievement: boolean = false;
+            let activitiesThisWeek: number = 0;
+            querySnapshot.forEach(function (doc: any) {
+                if (doc.data().activityType === "running" && doc.data().gmail === gmail) {
+                     //1000*60*60*24*7 millisecondes en une semaine
+                    if ((currentDate - doc.data().startTime) < 604800000) { 
+                        activitiesThisWeek = activitiesThisWeek + 1
+                    }
                 }
-            }
-            if (activitiesThisWeek >= 3) {
-                isAchievement = true
-            }           
-            return (isAchievement)
+                if (activitiesThisWeek >= 3) {
+                    isAchievement = true
+                }           
+            })
+            resolve(isAchievement)
         })
-        return(isAchievement)
     })    
-    return myPromise
+    return myPromise       
 }
 
 /* 
-    Fonction qui vérifie si le succès 7 running en une tout a été réalisé
+    Fonction qui vérifie si le succès 7 running en tout a été réalisé
 */
-async function checkAchievementSevenRunning(gmail: string): Promise<boolean> {
+async function checkAchievementSevenRunning(gmail: string): Promise<any> {
 
-    const myPromise = await db.collection("RecordedActivities").get().then((querySnapshot: any) => {
-        let isAchievement: boolean = false;
-        let activitiesTotal: number = 0;
-        querySnapshot.forEach(function (doc: any) {
-            // doc.data() is never undefined for query doc snapshots
-            if (doc.data().activityType === "running" && doc.data().gmail === gmail) {               
-                activitiesTotal = activitiesTotal + 1              
-            }
-            if (activitiesTotal >= 7) {
-                isAchievement = true
-            }           
-            return (isAchievement)
+    const myPromise = new Promise ((resolve: any, reject: any) =>{
+        db.collection("RecordedActivities").get().then((querySnapshot: any) => {
+            let isAchievement: boolean = false;
+            let activitiesTotal: number = 0;
+            querySnapshot.forEach(function (doc: any) {
+                if (doc.data().activityType === "running" && doc.data().gmail === gmail) {               
+                    activitiesTotal = activitiesTotal + 1              
+                }
+                if (activitiesTotal >= 7) {
+                    isAchievement = true
+                }            
+            })
+            resolve(isAchievement)
         })
-        return(isAchievement)
     })    
-    return myPromise
+    return myPromise       
+}
+
+async function checkAchievementHundredPushups(gmail: string): Promise<any> {
+
+    const myPromise = new Promise ((resolve: any, reject: any) =>{
+        db.collection("RecordedActivities").get().then((querySnapshot: any) => {
+            querySnapshot.forEach(function (doc: any) {
+                if (doc.data().activityType === "pushups" && doc.data().gmail === gmail && doc.data().value >= 100 ) {               
+                    resolve(true)       
+                }        
+            })
+            resolve(false)
+        })
+    })    
+    return myPromise       
 }
 
 
@@ -455,17 +492,17 @@ async function checkAchievementSevenRunning(gmail: string): Promise<boolean> {
 */
 function checkLevelUp(gmail: string) {
     db.collection("Users").get().then(function (querySnapshot: any) {
+
         querySnapshot.forEach(function (doc: any) {
-            // doc.data() is never undefined for query doc snapshots
             if (doc.data().gmail === gmail) {
+                db.collection("Levels").get().then((querySnapshotLevels: any) => {  
 
-
-                db.collection("Levels").get().then((querySnapshotLevels: any) => {     
                     let count: number = 0       
                     let updated: boolean = false        
 
                     querySnapshotLevels.docs[0].data().levels.forEach (() => {
-                        if (querySnapshotLevels.docs[0].data().levels[count] > doc.data().totalExperience && updated === false) {    // vérifie si un palier d'xp a été franchi 
+                        if (querySnapshotLevels.docs[0].data().levels[count] > doc.data().totalExperience 
+                                                                                    && updated === false) {   
                             const newLevel = count-1
                             updated = true
                             
@@ -473,8 +510,7 @@ function checkLevelUp(gmail: string) {
                                 level: newLevel
                             })                          
                         }
-                        count = count + 1
-                        
+                        count = count + 1                    
                     })
                     
                 })                 
