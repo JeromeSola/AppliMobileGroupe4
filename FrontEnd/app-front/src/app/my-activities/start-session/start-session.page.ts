@@ -83,7 +83,13 @@ export class StartSessionPage implements OnInit {
 
     this.cloudFunction.createRecordedActivity(data)
     .then(
-      (res)=>{console.log(res)}
+      (res)=>{
+        console.log(res);
+        this.ggFit.postStepInfo(data)
+        .then(
+          res => console.log(res)
+        )
+      }
     )
     .catch(
       (err)=>console.log(err)

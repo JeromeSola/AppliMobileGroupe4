@@ -86,6 +86,7 @@ export class ProgressionPage implements OnInit {
       },
       options: {
         scales: {
+          responsive: true,
           yAxes: [{
             ticks: {
               beginAtZero: true

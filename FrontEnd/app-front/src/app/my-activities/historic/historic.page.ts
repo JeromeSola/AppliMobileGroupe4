@@ -39,6 +39,7 @@ export class HistoricPage implements OnInit {
 
   ionViewWillEnter() {
     this.error.status=false;
+    this.activities = [];
     this.activitiesToShow = [];
     this.offset = 0;
     this.newOffset = 0;
@@ -80,6 +81,7 @@ export class HistoricPage implements OnInit {
             .map(
 
               (activity) => {
+                console.log(activity);
                 var startTime: any = new Date(Math.round(+activity.dataset[0].point[0].startTimeNanos / 1000000));
                 var endTime: any = new Date(Math.round(+activity.dataset[0].point[0].endTimeNanos / 1000000));
                 let timeElapsed = new Date(endTime - startTime);
@@ -125,6 +127,7 @@ export class HistoricPage implements OnInit {
 
     this.newOffset = this.totalLength;
 
+    console.log(this.activities);
     console.log('tt: ' + this.totalLength)
     console.log(`offset: ${this.offset}, newOffset: ${this.newOffset}`);
 
@@ -136,7 +139,7 @@ export class HistoricPage implements OnInit {
       this.offset = this.offset + this.n;
     } else if (this.newOffset - this.offset < this.n && this.newOffset - this.offset > 0) {
       console.log('2')
-      for (let i = this.offset; i < this.newOffset; i++) {
+      for (let i = this.offset; i < this.newOffset ; i++) {
         this.activitiesToShow.push(this.activities[i])
         this.offset = +this.newOffset;
       }
