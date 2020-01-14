@@ -9,6 +9,9 @@ import { LoginService } from '../services/login.service';
 import { GameService, Achievement } from '../services/game.service';
 import { ActivityService, Activity } from '../services/activity.service';
 
+import { first } from 'rxjs/operators';
+import { UserCloudFuncService } from '../services/user-cloud-func.service';
+
 const INITIAL_TAB: number = 1;
 interface Event {
   summary:string,
@@ -50,7 +53,8 @@ export class ProfilePage implements OnInit {
     private calendar:CalendarService,
     private gameService: GameService,
     private alertController: AlertController,
-    private activityService: ActivityService
+    private activityService: ActivityService,
+    private cloudFunc: UserCloudFuncService
   ) { }
 
   ngOnInit() {
@@ -112,6 +116,29 @@ export class ProfilePage implements OnInit {
         this.loginService.login()
       }
     })
+  }
+
+  public isFollowing(): boolean {
+    if (this.isLoggedUser()) { return true }
+    if (!this.displayedUser) { return false }
+    for (let gmail of this.loginService.loggedUser.friends) {
+      if (this.displayedUser.gmail == gmail) { return true; }
+    }
+    return false;
+  }
+
+  public onClickUnfollow(): void {
+    this.cloudFunc.deleteFriend(this.loginService.loggedUser.gmail, this.displayedUser.gmail)
+    .pipe(first()).subscribe(response => {
+      console.log(JSON.stringify(response));
+    });
+  }
+
+  public onClickFollow(): void {
+    this.cloudFunc.addFriend(this.loginService.loggedUser.gmail, this.displayedUser.gmail)
+    .pipe(first()).subscribe(response => {
+      console.log(JSON.stringify(response));
+    });
   }
 
   isLoggedUser() {

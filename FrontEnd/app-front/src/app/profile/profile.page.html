@@ -32,14 +32,33 @@
         <img *ngIf="!displayedUser" src="../../assets/img/unknown-avatar.png">
       </ion-avatar>
     </ion-row>
-    <ion-row class="center-content">
-      <ion-text *ngIf="displayedUser" class="user-name">
-        {{this.displayedUser.firstName}} {{this.displayedUser.lastName}}
-      </ion-text>
-      <ion-text *ngIf="!displayedUser" class="user-name">
-        Unknown user : {{ username }}
-      </ion-text>
-    </ion-row>
+    <ion-grid>
+      <ion-row class="center-content">
+        <ion-text *ngIf="displayedUser" class="user-name">
+          {{this.displayedUser.firstName}} {{this.displayedUser.lastName}}
+        </ion-text>
+        <ion-text *ngIf="!displayedUser" class="user-name">
+          Unknown user : {{ username }}
+        </ion-text>
+      </ion-row>
+      <ion-row *ngIf="!isLoggedUser()" class="center-content">
+        <ion-button
+          *ngIf="isFollowing()"
+          (click)="onClickUnfollow()"
+          size="small"
+          fill="clear"
+          class="button-unfollow">
+          - Suivi
+        </ion-button>
+        <ion-button
+          *ngIf="!isFollowing()"
+          (click)="onClickFollow()"
+          size="small"
+          class="button-follow">
+          + Suivre
+        </ion-button>
+      </ion-row>
+    </ion-grid>
     <ion-grid>
       <ion-row class="center-content">
         <ion-col

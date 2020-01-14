@@ -90,3 +90,8 @@
     padding-bottom: 20px;
     width: 100%;
 }
+.button-unfollow {
+    color: var(--ion-color-primary);
+    --color: var(--ion-color-primary);
+    border: solid var(--ion-color-primary) 1px;
+}

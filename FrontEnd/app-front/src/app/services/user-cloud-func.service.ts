@@ -16,4 +16,12 @@ export class UserCloudFuncService {
   public UpdateUserAccessToken(gmail: string,access_token: string):Observable<any>{
     return this.http.get(`https://us-central1-coachman-2aaa8.cloudfunctions.net/updateUserAccessToken?gmail=${gmail}&newAccessToken=${access_token}` )
   }
+
+  public addFriend(gmail: string, friend: string): Observable<any> {
+    return this.http.get(`https://us-central1-coachman-2aaa8.cloudfunctions.net/addFriend?gmail=${gmail}&friend=${friend}` );
+  }
+
+  public deleteFriend(gmail: string, friend: string): Observable<any> {
+    return this.http.get(`https://us-central1-coachman-2aaa8.cloudfunctions.net/deleteFriend?gmail=${gmail}&friend=${friend}` );
+  }
 }
