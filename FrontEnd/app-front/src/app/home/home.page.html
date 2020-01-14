@@ -11,40 +11,29 @@
 
 <ion-content *ngIf="loginService.isLoggedIn()">
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-    <ion-fab-button (click)="onClick()">
+    <ion-fab-button (click)="onClickChat()">
       <ion-icon name="chatboxes"></ion-icon>
     </ion-fab-button>
   </ion-fab>
-  <ion-card class="welcome-card">
-    <img src="/assets/shapes.svg" alt="" />
-    <ion-card-header>
-      <ion-card-subtitle>Get Started</ion-card-subtitle>
-      <ion-card-title>Welcome to Ionic</ion-card-title>
-    </ion-card-header>
+  <ion-refresher slot="fixed" (ionRefresh)="onRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+  <div class="ion-padding" *ngIf="isFollowingNobody()">
+    Vous ne suivez actuellement personne. Pour commencer à suivre quelqu'un, et voir leurs dernières activités dans votre fil d'actualité, cliquez sur votre profil, puis recherchez un utilisateur à l'aide de la barre de recherche.
+  </div>
+  <div class="ion-padding" *ngIf="!isFollowingNobody() && activities.length == 0">
+    Aucun des utilisateurs que vous suivez n'a posté de contenu.
+  </div>
+  <ion-list *ngIf="!isFollowingNobody() && activities.length > 0">
+    <ion-card *ngFor="let activity of activities">
+      <ion-card-header>
+        <ion-card-title>{{ getActivityTitle(activity) }}</ion-card-title>
+        <ion-card-subtitle>{{ getStartTime(activity) }} ({{ getActivityLength(activity) }})</ion-card-subtitle>
+      </ion-card-header>
+    </ion-card>
     <ion-card-content>
-      <p>Now that your app has been created, you'll want to start building out features and components. Check out some of the resources below for next steps.</p>
+      <div class="ion-padding">{{ getActivityDescription(activity) }}</div>
     </ion-card-content>
-  </ion-card>
-  <ion-list lines="none">
-    <ion-list-header>
-      <ion-label>Resources</ion-label>
-    </ion-list-header>
-    <ion-item href="https://ionicframework.com/docs/">
-      <ion-icon slot="start" color="medium" name="book"></ion-icon>
-      <ion-label>Ionic Documentation</ion-label>
-    </ion-item>
-    <ion-item href="https://ionicframework.com/docs/building/scaffolding">
-      <ion-icon slot="start" color="medium" name="build"></ion-icon>
-      <ion-label>Scaffold Out Your App</ion-label>
-    </ion-item>
-    <ion-item href="https://ionicframework.com/docs/layout/structure">
-      <ion-icon slot="start" color="medium" name="grid"></ion-icon>
-      <ion-label>Change Your App Layout</ion-label>
-    </ion-item>
-    <ion-item href="https://ionicframework.com/docs/theming/basics">
-      <ion-icon slot="start" color="medium" name="color-fill"></ion-icon>
-      <ion-label>Theme Your App</ion-label>
-    </ion-item>
   </ion-list>
 </ion-content>
 

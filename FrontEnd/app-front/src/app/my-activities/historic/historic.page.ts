@@ -39,6 +39,7 @@ export class HistoricPage implements OnInit {
 
   ionViewWillEnter() {
     this.error.status=false;
+    this.activitiesToShow = [];
     this.offset = 0;
     this.newOffset = 0;
     this.totalLength = 0;

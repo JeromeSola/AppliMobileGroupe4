@@ -1,49 +1,37 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
-import { IonContent,Platform } from '@ionic/angular';
+// Module
+import { Component, ViewChild, AfterViewInit } from '@angular/core';
+import { IonContent, Platform } from '@ionic/angular';
+import { MediaFile } from '@ionic-native/media-capture/ngx';
 
-import { LoginService } from 'src/app/services/login.service';
-import { UserInfo} from '../services/user.service';
+// Service
 import { MessageService } from '../services/message.service';
-import { Message } from '../services/message'
-
-import { MediaCapture, MediaFile, CaptureError, CaptureAudioOptions } from '@ionic-native/media-capture/ngx';
-import { HttpClient } from '@angular/common/http'
-import { Router } from '@angular/router';
 
 const SCROLL_ANIMATION_DURATION: number = 500;
-
 
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.page.html',
   styleUrls: ['./chat.page.scss'],
 })
-export class ChatPage implements OnInit, AfterViewInit {
+export class ChatPage implements AfterViewInit {
   @ViewChild(IonContent, {static: false}) content: IonContent;
   private _isTextModeEnabled: boolean = true;
   private _userInput: string = '';
-  private _messageList: Message[] = [];
+  private _messageList = [];
   private _lastAudio: MediaFile = null; 
-  private userInfo: UserInfo;
   isLoading: boolean;
   
   constructor(
-    private message:MessageService,
-    private http: HttpClient,
-    private mediaCapture: MediaCapture,
-    public platform: Platform,
-    private loginService: LoginService,
-    private router: Router) { }
-
-  ngOnInit(){
-    this.userInfo = this.loginService.loggedUser;
-  }
+    private message: MessageService,
+    public platform: Platform
+  ) { }
 
   ngAfterViewInit() {
     this.scrollToBottom();
   }
 
   onSendClick(): void {
+    this.isLoading=true
     this.SendMessageToFront(this.userInput, true);
     this.SendMessageToDialogflow(this.userInput);
     this.ResetInput();
@@ -57,7 +45,8 @@ export class ChatPage implements OnInit, AfterViewInit {
 
   SendMessageToDialogflow(text: string){
     this.isLoading = true;
-    const options = this.message.getDialogflowOptions(this.userInfo);
+    const options = this.message.getDialogflowOptions();
+    console.log(options);
     this.message.client.textRequest(text,options)
     .then(response => { 
       this.MessageAction(response);
@@ -76,30 +65,30 @@ export class ChatPage implements OnInit, AfterViewInit {
 
       switch (response.result.metadata.intentName) {
         case "Entrainement - yes":
-          //this.router.navigate([`/my-planning/`]);
+          this.message.RedirectionPage(`/my-planning/`);
           break;
 
         case "Progression":
-          this.router.navigate([`/profile/${this.userInfo.username}`]);
+          this.message.RedirectionPage('/profile/');
           break;
 
         case "Gamification":
-          this.router.navigate([`/profile/${this.userInfo.username}`]);
+          this.message.RedirectionPage('/profile/');
           break;
 
         case "Start":
-          this.router.navigate(['/my-activities/']);
+          this.message.RedirectionPage('/my-activities/');
           break;
 
         case "Rechercher":
-            if (response.result.fulfillment.speech == "Désolé, nous n'avons pas trouver l'utilisateur que vous chercher.")
+            if (response.result.fulfillment.speech == "Désolé, nous n'avons pas trouvé l'utilisateur que vous chercher. Vérifier l'ortographe.")
               break;
             const num = response.result.fulfillment.speech.search(/[^\w\s]/g);
-            this.router.navigate([`/profile/${response.result.fulfillment.speech.slice(num+2)}`]);   
+            this.message.RedirectionPage(`/profile/${response.result.fulfillment.speech.slice(num+2)}`);   
             break;     
 
         case "Challenge":
-          this.router.navigate([`/profile/${response.result.parameters.challenger_name[0]}`]);   
+          this.message.RedirectionPage(`/profile/${response.result.parameters.challenger_name[0]}`);   
           break;     
       }
     }
@@ -127,8 +116,8 @@ export class ChatPage implements OnInit, AfterViewInit {
   get userInput(): string { return this._userInput; }
   set userInput(value: string) { this._userInput = value; }
 
-  get messageList(): Message[] { return this._messageList; }
-  set messageList(value: Message[]) { this._messageList = value; }
+  get messageList() { return this._messageList; }
+  set messageList(value) { this._messageList = value; }
 
   get lastAudio(): MediaFile { return this._lastAudio; }
   set lastAudio(value: MediaFile) { this._lastAudio = value; }

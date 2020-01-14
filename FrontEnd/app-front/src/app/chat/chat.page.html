@@ -44,26 +44,11 @@
 <ion-footer no-border>
   <ion-toolbar *ngIf="isTextModeEnabled">
     <ion-item>
-      <ion-button item-start (click)="onSwitchMode()" fill="clear">
-        <ion-icon slot="icon-only" name="mic"></ion-icon>
-      </ion-button>
+
       <ion-input [(ngModel)]="userInput" placeholder='Entrez votre texte'></ion-input>
       <ion-button item-end disabled="{{!userInput}}" (click)="onSendClick()" fill="clear">
         <ion-icon slot="icon-only" name="send"></ion-icon>
       </ion-button>
     </ion-item>
-  </ion-toolbar>
-  <ion-toolbar class="mic-footbar" no-border *ngIf="!isTextModeEnabled">
-    <ion-row class="ion-justify-content-center">
-      <ion-fab-button class="mic-footbar-button" (click)="onSpeak()">
-        <ion-icon name="mic"></ion-icon>
-      </ion-fab-button>
-      <ion-fab-button class="mic-footbar-button" (click)="onSwitchMode()">
-        <ion-icon name="create"></ion-icon>
-      </ion-fab-button>
-      <!--
-      <ion-button disabled="{{!lastAudio}}" (click)="onPlay()">Jouer Dernier Audio</ion-button>
-      -->
-    </ion-row>
   </ion-toolbar>
 </ion-footer>

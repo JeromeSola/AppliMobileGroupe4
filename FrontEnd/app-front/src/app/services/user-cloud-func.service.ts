@@ -27,4 +27,12 @@ export class UserCloudFuncService {
   public createRecordedActivity(userSession:UserSession){
     return this.http.get(`https://us-central1-coachman-2aaa8.cloudfunctions.net/createRecordedActivity?gmail=${userSession.gmail}&activityType=running&startTime=${userSession.startTime}&endTime=${userSession.endTime}&value=${userSession.value}`).toPromise()
   }
+  
+  public addFriend(gmail: string, friend: string): Observable<any> {
+    return this.http.get(`https://us-central1-coachman-2aaa8.cloudfunctions.net/addFriend?gmail=${gmail}&friend=${friend}` );
+  }
+
+  public deleteFriend(gmail: string, friend: string): Observable<any> {
+    return this.http.get(`https://us-central1-coachman-2aaa8.cloudfunctions.net/deleteFriend?gmail=${gmail}&friend=${friend}` );
+  }
 }
