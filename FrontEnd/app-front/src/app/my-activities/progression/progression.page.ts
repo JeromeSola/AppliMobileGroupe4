@@ -3,11 +3,17 @@ import { Chart } from "chart.js";
 import * as moment from 'moment';
 import { GoogleFitService } from 'src/app/services/google-fit.service';
 
+interface CustomError {
+  status: boolean;
+  message: string;
+}
+
 @Component({
   selector: 'app-progression',
   templateUrl: './progression.page.html',
   styleUrls: ['./progression.page.scss'],
 })
+
 export class ProgressionPage implements OnInit {
   @ViewChild('lineChart', { static: false }) lineChart;
   @ViewChild('monthChart', { static: false }) monthChart;
@@ -19,35 +25,52 @@ export class ProgressionPage implements OnInit {
 
   weekDate: any;
   monthDate: any;
+  error: CustomError = {
+    message: '',
+    status: false,
+  };
+  loading: boolean = true;
 
   constructor(private ggFit: GoogleFitService) { }
 
   ngOnInit() {
     moment.locale('FR');
+    this.error.status = false;
+    this.loading = true;
   }
 
   ionViewWillEnter() {
-
+    var promisesStepsInfosByDay = [];
+    this.error.status = false;
+    this.loading = true;
     this.charts.week = this.lineChart;
     this.charts.month = this.monthChart;
 
-    this.getStepsInfosByDay('week').then(
-      (weekChart) => {
-        console.log(weekChart)
-        this.createChart(weekChart, 'week')
-      }
-    )
+    for (let specificChart in this.charts) {
+      promisesStepsInfosByDay.push(this.getStepsInfosByDay(specificChart).then(
+        (weekChart) => {
+          this.createChart(weekChart, specificChart)
+        }
+      )
+        .catch(
+          (err) => {
+            console.log(err)
+          }
+        )
+      )
+    }
 
-    this.getStepsInfosByDay('month').then(
-      (monthChart) => {
-        console.log(monthChart)
-        this.createChart(monthChart, 'month')
-      }
-    )
-  }
-
-  ionViewDidEnter() {
-
+    Promise.all(promisesStepsInfosByDay)
+      .then(
+        () => {
+          this.loading = false;
+        }
+      )
+      .catch(
+        err => {
+          console.log(err)
+        }
+      )
   }
 
   createChart(chart: any, specificChart: string) {
@@ -76,7 +99,7 @@ export class ProgressionPage implements OnInit {
     });
   }
 
-  getStepsInfosByDay(specificChart) {
+  getStepsInfosByDay(specificChart: string) {
     var chart = {
       xData: [],
       yData: [],
@@ -115,7 +138,17 @@ export class ProgressionPage implements OnInit {
         }
       )
       .catch(
-        err => console.log(err)
+        err => {
+          console.log(err);
+          this.error.status = true;
+          if (err.status == 401) {
+            this.error.message = 'Veuillez vous reconnecter !';
+          } else if (err.status == 403) {
+            this.error.message = "Vous n'avez fait aucune session de marche durant ces 3 derniers mois !";
+          } else {
+            this.error.message = "Erreur Inconnu.";
+          }; 
+        }
       );
   }
 
@@ -158,7 +191,6 @@ export class ProgressionPage implements OnInit {
 
     if (day === 0) {
       lastMonday = new Date(today.getTime() - 6 * 24 * 60 * 60 * 1000 - hours * 60 * 60 * 1000 - minutes * 60 * 1000 - seconds * 1000);
-      console.log(lastMonday);
 
     } else {
       lastMonday = new Date(today.getTime() - (day - 1) * 24 * 60 * 60 * 1000 - hours * 60 * 60 * 1000 - minutes * 60 * 1000 - seconds * 1000)
@@ -176,7 +208,6 @@ export class ProgressionPage implements OnInit {
     var seconds = today.getSeconds();
     var firstofMonth = new Date(today.getTime() - (monthDate - 1) * 24 * 60 * 60 * 1000 - hours * 60 * 60 * 1000 - minutes * 60 * 1000 - seconds * 1000);
     this.monthDate = moment(firstofMonth).format("L");
-    console.log(firstofMonth);
     return firstofMonth.getTime();
 
   }

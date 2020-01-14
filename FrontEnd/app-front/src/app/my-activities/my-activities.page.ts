@@ -7,17 +7,11 @@ import { Component, OnInit } from '@angular/core';
 })
 export class MyActivitiesPage implements OnInit {
 
-  public tab : string = 'historic'
-
   constructor() {
   
   }
 
   ngOnInit() {
-  }
-
-  go(page : any){
-    this.tab = page
   }
 
 }

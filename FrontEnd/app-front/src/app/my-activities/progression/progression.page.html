@@ -1,27 +1,44 @@
 <ion-content>
-  <ion-list style="width:max-content;">
-      <ion-item >    
-          <ion-card>
-            <ion-card-header>
-              <h5>Nombre de pas effectué dans la semaine</h5>
-              <p>Depuis le: {{weekDate}}</p>
-            </ion-card-header>
-            <ion-card-content>
-              <canvas #lineChart></canvas>
-            </ion-card-content>
-          </ion-card>
+
+  <div *ngIf="loading && !error.status">
+    <ion-progress-bar type="indeterminate"></ion-progress-bar>
+  </div>
+
+  <div *ngIf="!error.status">
+    <ion-list style="width:max-content;">
+      <ion-item>
+        <ion-card>
+          <ion-card-header>
+            <h5>Nombre de pas effectué dans la semaine</h5>
+            <p>Depuis le: {{weekDate}}</p>
+          </ion-card-header>
+          <ion-card-content>
+            <canvas #lineChart></canvas>
+          </ion-card-content>
+        </ion-card>
       </ion-item>
-  
-      <ion-item >    
-          <ion-card>
-            <ion-card-header>
-              <h5>Nombre de pas effectué ce mois</h5>
-              <p>Depuis le: {{monthDate}}</p>
-            </ion-card-header>
-            <ion-card-content>
-              <canvas #monthChart></canvas>
-            </ion-card-content>
-          </ion-card>
-        </ion-item>
-  </ion-list>
+
+      <ion-item>
+        <ion-card>
+          <ion-card-header>
+            <h5>Nombre de pas effectué ce mois</h5>
+            <p>Depuis le: {{monthDate}}</p>
+          </ion-card-header>
+          <ion-card-content>
+            <canvas #monthChart></canvas>
+          </ion-card-content>
+        </ion-card>
+      </ion-item>
+    </ion-list>
+  </div>
+
+  <div *ngIf="error.status">
+
+    <ion-card>
+      <ion-card-header>
+        <h5>{{error.message}}</h5>
+      </ion-card-header>
+    </ion-card>
+
+  </div>
 </ion-content>

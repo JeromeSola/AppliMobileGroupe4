@@ -3,51 +3,73 @@ import { GoogleFitService } from 'src/app/services/google-fit.service';
 import * as moment from 'moment';
 import { IonInfiniteScroll } from '@ionic/angular';
 
-
+interface CustomError {
+  status: boolean;
+  message: string;
+}
 
 @Component({
   selector: 'app-historic',
   templateUrl: './historic.page.html',
   styleUrls: ['./historic.page.scss'],
 })
+
 export class HistoricPage implements OnInit {
 
   @ViewChild(IonInfiniteScroll, { static: false }) infiniteScroll: IonInfiniteScroll;
 
-  activities : any = [];
-  activitiesToShow : any = [];
+  activities: any = [];
+  activitiesToShow: any = [];
   newOffset: number;
   offset: number;
   totalLength: number;
+  error: CustomError = {
+    message: '',
+    status: false,
+  };
+  loading: boolean = false;
   private n = 25;
 
   constructor(private ggFit: GoogleFitService) { }
 
   ngOnInit() {
     moment.locale('FR');
+    this.error.status=false;
+  }
+
+  ionViewWillEnter() {
+    this.error.status=false;
     this.offset = 0;
     this.newOffset = 0;
     this.totalLength = 0;
     var wait = new Promise((resolve, reject) => this.getStepsInfoFromGgFit(resolve, reject))
-    wait.then(
-      ()=> {console.log('lol');this.loadActivitiesToshow('')}
+    wait
+    .then(
+      () => { this.loadActivitiesToshow('') }
+    )
+    .catch(
+      err => {
+        console.log(err);
+      }
     );
   }
 
-  sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-
   getStepsInfoFromGgFit(resolve, reject) {
+
+    var today = new Date();
+    this.loading = true;
+    this.error.status = false;
+
     var req = {
-      startTime: 1574636400000,
-      endTime: 1578678205703,
-      duration: 7200000 //=2H // 86400000 //=1J  //Milliseconds 
+      startTime: today.getTime() - 3 * 30 * 24 * 60 * 60 * 1000, // ~3 mois en arrière
+      endTime: today.getTime(),
+      duration: 7200000 //=2H //Milliseconds 
     }
 
-   return this.ggFit.getStepsInfo(req)
+    return this.ggFit.getStepsInfo(req)
       .then(
         (data: any) => {
+          console.log(data)
           data.bucket
             .filter(
               activity => {
@@ -56,7 +78,7 @@ export class HistoricPage implements OnInit {
             )
             .map(
 
-              ( activity ) => {
+              (activity) => {
                 var startTime: any = new Date(Math.round(+activity.dataset[0].point[0].startTimeNanos / 1000000));
                 var endTime: any = new Date(Math.round(+activity.dataset[0].point[0].endTimeNanos / 1000000));
                 let timeElapsed = new Date(endTime - startTime);
@@ -72,8 +94,7 @@ export class HistoricPage implements OnInit {
                 })
 
                 this.totalLength++;
-                if(this.totalLength === 1 ){
-                  console.log(this.totalLength)
+                if (this.totalLength === 1) {
                   resolve()
                 }
               }
@@ -81,12 +102,29 @@ export class HistoricPage implements OnInit {
         }
       )
       .catch(
-        err => console.log(err)
+        err => {
+          console.log(err);
+          this.error.status = true;
+          if (err.status == 401){
+            this.error.message = 'Veuillez vous reconnecter !';
+          }else if( err.status == 403 ){
+            this.error.message = "Vous n'avez fait aucune session de marche durant ces 3 derniers mois !";
+          }else{
+            this.error.message = "Erreur Inconnu.";
+          }
+          reject()
+        }
       );
   }
 
   loadActivitiesToshow(event) {
+
+    this.loading = false;
+    this.error.status = false;
+
     this.newOffset = this.totalLength;
+
+    console.log('tt: ' + this.totalLength)
     console.log(`offset: ${this.offset}, newOffset: ${this.newOffset}`);
 
     if (this.newOffset - this.offset > this.n) {
@@ -94,11 +132,12 @@ export class HistoricPage implements OnInit {
       for (let i = this.offset; i < this.offset + this.n; i++) {
         this.activitiesToShow.push(this.activities[i])
       }
-      this.offset = +this.n;
-    } else if( this.newOffset - this.offset < this.n && this.newOffset - this.offset > 0){
+      this.offset = this.offset + this.n;
+    } else if (this.newOffset - this.offset < this.n && this.newOffset - this.offset > 0) {
       console.log('2')
       for (let i = this.offset; i < this.newOffset; i++) {
         this.activitiesToShow.push(this.activities[i])
+        this.offset = +this.newOffset;
       }
     } else {
       console.log("3")
@@ -108,8 +147,7 @@ export class HistoricPage implements OnInit {
     if (event != '') {
       event.target.complete();
     }
-    console.log(this.activitiesToShow)
-
+    console.log(this.activitiesToShow);
   }
 
 }

@@ -2,6 +2,13 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
+interface UserSession{
+  gmail: string;
+  startTime: number;
+  endTime: number;
+  value: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -15,5 +22,9 @@ export class UserCloudFuncService {
 
   public UpdateUserAccessToken(gmail: string,access_token: string):Observable<any>{
     return this.http.get(`https://us-central1-coachman-2aaa8.cloudfunctions.net/updateUserAccessToken?gmail=${gmail}&newAccessToken=${access_token}` )
+  }
+
+  public createRecordedActivity(userSession:UserSession){
+    return this.http.get(`https://us-central1-coachman-2aaa8.cloudfunctions.net/createRecordedActivity?gmail=${userSession.gmail}&activityType=running&startTime=${userSession.startTime}&endTime=${userSession.endTime}&value=${userSession.value}`).toPromise()
   }
 }
