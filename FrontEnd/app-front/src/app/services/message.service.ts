@@ -24,7 +24,7 @@ export class MessageService {
   ) {
      this.messageList=[];
      this.client=new ApiAiClient({accessToken: accessToken})
-     this.messageList.push(new Message('Bonjour dîtes"ok coach"pour commencer à converser avec votre coach personnel',false,new Date()))  
+     this.messageList.push(new Message('Bonjour dîtes "Ok Coach" pour commencer à converser avec votre coach personnel',false,new Date()))  
   }
 
   WriteMessage(text: string, isFromUser: boolean){
